@@ -10,7 +10,6 @@ cb.settings_choices = [
     { name: 'freeentryenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable free ticket show entry (0 for disable, 1 for enable)" },
     { name: 'freeentryamount', type: 'int', minValue: 0, defaultValue: 600, label: "Points required for free entry" },
     { name: 'spincooldown', type: 'int', minValue: 0, defaultValue: 60, label: "Time between spins (in seconds)" },
-    { name: 'leaderboardcooldown', type: 'int', minValue: 0, defaultValue: 1, label: "Time between leaderboard messages (in minutes)" },
     { name: 'spinMin', type: 'int', minValue: 0, defaultValue: 5, label: "Minimum spin reward" },
     { name: 'spinMax', type: 'int', minValue: 0, defaultValue: 20, label: "Maximum spin reward" },
 
@@ -55,17 +54,7 @@ cb.settings_choices = [
 var backgrounds = {
     default: "f693e535-c6b4-4b43-898a-d81a8ccabde2",
     edge: "52145946-8f2f-4132-a247-1644b260934a",
-    meeps: "85c01932-c376-4449-a47d-33cad12521d3",
-    coolcat: 'a52b8728-516f-4fb1-b11f-b9ee41cd83d6',
-    kass: '73a76b1e-69e6-4721-8b60-e608cc64661a',
-    booty: 'f1176b95-6dfb-4793-a178-8d050a9d0878',
-    nocturne: '9c70d37d-6e59-4277-835d-ef11e0e3a1c3',
-    meepsicon: '8bef6bac-4915-4f40-899e-03e7b4bc949b',
-    inception: '847973dc-4d5c-42bf-a4b8-1047368594bb',
-    kitten: '5551b3b1-082e-422f-a2ab-871182eae153',
-    nosebleed: 'f5527216-4db6-4379-96b0-f3564649049b',
-    hypno: '8a22975c-cf26-4d65-967f-77a04a5ddbcc',
-    purr: 'cba81fd1-058e-46b7-b5ea-871ff6d46530',
+
 };
 
 var currentBackground = backgrounds.default;
@@ -209,6 +198,17 @@ var TmpCommands = [];
     //add extras if enabled
     if (cb.settings['extras'] == 1) {
         FreeCommands.push(new FreeCommand("/KASS", KassCallback, KassHelpCallback, true, false));
+
+        backgrounds['meeps'] = "85c01932-c376-4449-a47d-33cad12521d3";
+        backgrounds['kass'] = "73a76b1e-69e6-4721-8b60-e608cc64661a";
+        backgrounds['booty'] = "f1176b95-6dfb-4793-a178-8d050a9d0878";
+        backgrounds['nocturne'] = "9c70d37d-6e59-4277-835d-ef11e0e3a1c3";
+        backgrounds['meepsicon'] = "8bef6bac-4915-4f40-899e-03e7b4bc949b";
+        backgrounds['inception'] = "847973dc-4d5c-42bf-a4b8-1047368594bb";
+        backgrounds['kitten'] = "5551b3b1-082e-422f-a2ab-871182eae153";
+        backgrounds['nosebleed'] = "f5527216-4db6-4379-96b0-f3564649049b";
+        backgrounds['hypno'] = "8a22975c-cf26-4d65-967f-77a04a5ddbcc";
+        backgrounds['purr'] = "cba81fd1-058e-46b7-b5ea-871ff6d46530";
     }
 
     /// invocation
@@ -234,6 +234,7 @@ var TmpCommands = [];
     FreeCommands.push(new FreeCommand("/WHISPER", WhisperCallback, WhisperHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/SPIN", SpinCallback, SpinHelpCallback, cb.settings['rewardsenabled'], true));
     FreeCommands.push(new FreeCommand("/ADDCOM", AddcomCallback, AddcomHelpCallback, cb.settings['addcom'], false));
+    FreeCommands.push(new FreeCommand("/CLEARPREFIX", ClearPrefixCallback, ClearPrefixHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/PREFIX", PrefixCallback, PrefixHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/LEADERBOARD", LeaderboardCallback, LeaderboardHelpCallback, cb.settings['rewardsenabled'], true));
     FreeCommands.push(new FreeCommand("/GOALS", GoalsCallback, GoalsHelpCallback, true, true));
@@ -735,20 +736,24 @@ function QueueGoalCallback(user, message, rawMsgData) {
             let NewGoal = {};
             NewGoal['text'] = goalText;
             NewGoal['amount'] = amount;
+            if (goalText.length > 0 && amount > 0) {
+                if (goalNum == 1) {
+                    goalInfo.goal1Queue.push(NewGoal);
+                    cb.sendNotice(`Goal pushed to queue`, user, gold, blue, 'bold');
+                }
+                else if (goalNum == 2) {
+                    goalInfo.goal2Queue.push(NewGoal);
+                    cb.sendNotice(`Goal pushed to queue`, user, gold, blue, 'bold');
+                }
+                else {
+                    cb.sendNotice("Invalid goal number (choose goal 1 or 2)", user, red)
+                }
 
-            if (goalNum == 1) {
-                goalInfo.goal1Queue.push(NewGoal);
-                cb.sendNotice(`Goal pushed to queue`, user, gold, blue, 'bold');
+                updateGoalQueues();
             }
-            else if (goalNum == 2) {
-                goalInfo.goal2Queue.push(NewGoal);
-                cb.sendNotice(`Goal pushed to queue`, user, gold, blue, 'bold');
+            else{
+                cb.sendNotice("Invalid goal message or amount", user, red)
             }
-            else {
-                cb.sendNotice("Invalid goal number (choose goal 1 or 2)", user, red)
-            }
-
-            updateGoalQueues();
         }
 
     }
@@ -756,6 +761,20 @@ function QueueGoalCallback(user, message, rawMsgData) {
         rawMsgData['X-Spam'] = true;
         cb.chatNotice("You must be a mod or be in the fan club to add commands", user, purple);
     }
+}
+
+function ClearPrefixCallback(user, message, rawMsgData)
+{
+    if(UserInfo.customPrefixes.hasOwnProperty(user))
+    {
+        delete UserInfo.customPrefixes[user];
+        cb.sendNotice(`Your prefix has been cleared`, user, gold, blue, 'bold');
+    }
+}
+
+function ClearPrefixHelpCallback(user, message, rawMsgData)
+{
+    return "Allows users to clear their prefix";
 }
 
 function PrefixCallback(user, message, rawMsgData) {
@@ -811,25 +830,6 @@ function WhisperCallback(user, message, rawMsgData) {
 
         if (match) {
             let [_, command, username, whisper] = match;
-
-            // var tmp = message.replace(' ', '');
-
-            // //remove command header
-            // tmp = tmp.substr(8);
-
-            // //convert to array
-            // var arr = tmp.split("");
-            // //create string to store command name
-            // var username = "";
-
-            // //loop until you find a space and add each character to name
-            // var i = 0;
-            // while (arr[i] != ' ' && arr[i] != undefined) {
-            //     username = username.concat(arr[i]);
-            //     ++i;
-            // }
-
-            // let whisper = tmp.replace(username, '');
 
             if (activeUser(username)) {
                 rawMsgData['m'] = 'Sending whisper...';
@@ -1201,11 +1201,15 @@ function HelpCallback(user, message, rawMsgData) {
     for (i = 0; i < length; i++) {
         var tmpcmd = FreeCommands[i];
 
-        if (tmpcmd.name.toUpperCase() != "/HELP") {
-            if (tmpcmd.enabled && message.toUpperCase().includes(tmpcmd.name.toUpperCase())) {
-                aboutSpecificCommand = true;
-                command = tmpcmd;
-                break;
+        let match = message.match(/^(\S+)\s(.*)$/);
+        if (match) {
+            let [_, commandname, helper] = match;
+            if (tmpcmd.name.toUpperCase() != "/HELP") {
+                if (tmpcmd.enabled && helper.toUpperCase() == tmpcmd.name.toUpperCase()) {
+                    aboutSpecificCommand = true;
+                    command = tmpcmd;
+                    break;
+                }
             }
         }
     }
@@ -1330,7 +1334,7 @@ function DisableCallback(user, message, rawMsgData) {
 }
 
 function DisableHelpCallback() {
-    return String("Allows Mods to enable tip menu options. \nUsage: /enable /[command name] (you can omit the command name to see a list of commands)");
+    return String("Allows Mods to disable tip menu options. \nUsage: /enable /[command name] (you can omit the command name to see a list of commands)");
 }
 
 function EnableCallback(user, message, rawMsgData) {
@@ -1450,7 +1454,7 @@ function TicketShowCallback(user, message, rawMsgData) {
 }
 
 function TicketShowHelpCallback() {
-    return String("Starts selling tickets for a ticket show and makes the first goal the amount remaining until it starts. Usage: /startshow [amount]");
+    return String("Starts the ticket show which hides the cam to any users without a ticket");
 }
 
 function SetTagsCallback(user, message, rawMsgData) {
