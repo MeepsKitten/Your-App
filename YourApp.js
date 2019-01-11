@@ -109,7 +109,7 @@ const goalInfo = {
 };
 
 const UserInfo = {
-    activeUsers: [],
+    activeUsers: {},
     interactiveUsers: [],
     customPrefixes: {},
 }
@@ -119,6 +119,7 @@ var purple = "#C287C2";
 var red = "#840000";
 var blue = "#00e1ff";
 var gold = '#e6e655';
+var grey = '#dbdbdb';
 var fontSize = 11;
 var smallfontSize = 9;
 
@@ -200,6 +201,7 @@ var TmpCommands = [];
         FreeCommands.push(new FreeCommand("/KASS", KassCallback, KassHelpCallback, true, false));
 
         backgrounds['meeps'] = "85c01932-c376-4449-a47d-33cad12521d3";
+        backgrounds['coolcat'] = "a52b8728-516f-4fb1-b11f-b9ee41cd83d6";
         backgrounds['kass'] = "73a76b1e-69e6-4721-8b60-e608cc64661a";
         backgrounds['booty'] = "f1176b95-6dfb-4793-a178-8d050a9d0878";
         backgrounds['nocturne'] = "9c70d37d-6e59-4277-835d-ef11e0e3a1c3";
@@ -370,18 +372,20 @@ function SetGiftPrice(price) {
 }
 
 function activeUser(name) {
-    let exsists = false;
-    let length = UserInfo.activeUsers.length;
+    // let exsists = false;
+    // let length = UserInfo.activeUsers.length;
 
-    for (i = 0; i < length; i++) {
-        let curUser = UserInfo.activeUsers[i];
+    // for (var user in UserInfo.activeUsers) {
+    //     let curUser = UserInfo.activeUsers[user];
 
-        if (curUser['user'] == name) {
-            exsists = true;
-        }
-    }
+    //     if (curUser['user'] == name) {
+    //         exsists = true;
+    //     }
+    // }
 
-    return exsists;
+    // return exsists;
+
+    return UserInfo.activeUsers[name];
 }
 
 function setGoal(user, goal, goalText, amount) {
@@ -751,7 +755,7 @@ function QueueGoalCallback(user, message, rawMsgData) {
 
                 updateGoalQueues();
             }
-            else{
+            else {
                 cb.sendNotice("Invalid goal message or amount", user, red)
             }
         }
@@ -763,17 +767,54 @@ function QueueGoalCallback(user, message, rawMsgData) {
     }
 }
 
-function ClearPrefixCallback(user, message, rawMsgData)
-{
-    if(UserInfo.customPrefixes.hasOwnProperty(user))
-    {
-        delete UserInfo.customPrefixes[user];
-        cb.sendNotice(`Your prefix has been cleared`, user, gold, blue, 'bold');
+function ClearPrefixCallback(user, message, rawMsgData) {
+    let match = message.match(/^(\S+)?(?:\s(.*))?$/);
+
+    if (match) {
+
+        let [_, command, username] = match;
+
+        if (username) {
+            if (rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug)) {
+                if (activeUser(username)) {
+                    if (UserInfo.customPrefixes.hasOwnProperty(username)) {
+                        delete UserInfo.customPrefixes[username];
+                        cb.sendNotice(`Your prefix has been cleared`, username, gold, blue, 'bold');
+                        if (user != username) {
+                            cb.sendNotice(`You cleared the prefix for ${username}`, user, gold, blue, 'bold');
+                        }
+                    }
+                    else {
+                        cb.sendNotice(`You cleared the prefix for ${username}`, user, gold, blue, 'bold');
+                    }
+                }
+                else {
+                    cb.sendNotice(`${username} does not exsist`, user, red);
+                }
+            }
+            else {
+                cb.sendNotice("You must be a mod to clear other user's prefixes", user, red);
+            }
+        }
+        else {
+            if (UserInfo.customPrefixes.hasOwnProperty(user)) {
+                delete UserInfo.customPrefixes[user];
+                cb.sendNotice(`Your prefix has been cleared`, user, gold, blue, 'bold');
+            }
+            else {
+                cb.sendNotice(`Your prefix has been cleared`, user, gold, blue, 'bold');
+            }
+        }
+
+
+    }
+    else {
+        cb.sendNotice(`Syntax error`, user, red, blue, 'bold');
+
     }
 }
 
-function ClearPrefixHelpCallback(user, message, rawMsgData)
-{
+function ClearPrefixHelpCallback(user, message, rawMsgData) {
     return "Allows users to clear their prefix";
 }
 
@@ -799,7 +840,7 @@ function PrefixCallback(user, message, rawMsgData) {
         }
 
     }
-    else if (message['in_fanclub']) {
+    else if (rawMsgData['in_fanclub']) {
         let match = message.match(/(\/prefix)\s+(\S+)/);
 
         let [_, command, prefix] = match;
@@ -886,9 +927,8 @@ function TMCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(3);
 
-        let length = UserInfo.activeUsers.length;
-        for (i = 0; i < length; i++) {
-            let curUser = UserInfo.activeUsers[i];
+        for (var user in UserInfo.activeUsers) {
+            let curUser = UserInfo.activeUsers[user];
 
             if (curUser['is_mod']) {
                 cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], gold, red, 'bold');
@@ -909,9 +949,8 @@ function TBMCallback(user, message, rawMsgData) {
 
         cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, gold, red, 'bold');
 
-        let length = UserInfo.activeUsers.length;
-        for (i = 0; i < length; i++) {
-            let curUser = UserInfo.activeUsers[i];
+        for (var user in UserInfo.activeUsers) {
+            let curUser = UserInfo.activeUsers[user];
 
             if (curUser['is_mod']) {
                 cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], gold, red, 'bold');
@@ -1110,7 +1149,7 @@ function SpinHelpCallback() {
 
 function AddcomCallback(user, message, rawMsgData) {
     if (cb.settings['addcom'] == 1) {
-        if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || message['in_fanclub'])) {
+        if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || rawMsgData['in_fanclub'])) {
             var tmp = message.replace(' ', '');
 
             //remove command header
@@ -1334,7 +1373,7 @@ function DisableCallback(user, message, rawMsgData) {
 }
 
 function DisableHelpCallback() {
-    return String("Allows Mods to disable tip menu options. \nUsage: /enable /[command name] (you can omit the command name to see a list of commands)");
+    return String("Allows Mods to disable tip menu options. \nUsage: /disable /[command name] (you can omit the command name to see a list of commands)");
 }
 
 function EnableCallback(user, message, rawMsgData) {
@@ -1372,7 +1411,7 @@ function EnableCallback(user, message, rawMsgData) {
 }
 
 function EnableHelpCallback() {
-    return String("Allows Mods to disable tip menu options. \nUsage: /disable /[command name] (you can omit the command name to see a list of commands)");
+    return String("Allows Mods to enable tip menu options. \nUsage: /disable /[command name] (you can omit the command name to see a list of commands)");
 }
 
 function SetGoalCallback(user, message, rawMsgData) {
@@ -1790,6 +1829,11 @@ cb.onMessage(function (message) {
         }
     }
 
+    if(message['X-Spam'])
+    {
+        message['background'] = grey;
+    }
+
     return message;
 });
 
@@ -1846,8 +1890,8 @@ cb.onDrawPanel(function (user) {
 cb.onEnter(function (user) {
     let name = user['user'];
 
-    if (!UserInfo.activeUsers.includes(user)) {
-        UserInfo.activeUsers.push(user);
+    if (!UserInfo.activeUsers[name]) {
+        UserInfo.activeUsers[name] = user;
     }
 
 });
@@ -1855,8 +1899,8 @@ cb.onEnter(function (user) {
 cb.onLeave(function (user) {
     let name = user['user'];
 
-    if (UserInfo.activeUsers.includes(user)) {
-        delete UserInfo.activeUsers[UserInfo.activeUsers.indexOf(user)];
+    if (UserInfo.activeUsers[name]) {
+        delete UserInfo.activeUsers[name];
     }
 
     if (UserInfo.interactiveUsers.hasOwnProperty(name)) {
