@@ -110,13 +110,14 @@ const goalInfo = {
 
 const UserInfo = {
     activeUsers: {},
+    mutedUsers: {},
     interactiveUsers: [],
     customPrefixes: {},
 }
 
 //text info
 var purple = "#C287C2";
-var red = "#840000";
+var red = "#f4a6a6";
 var blue = "#00e1ff";
 var gold = '#e6e655';
 var grey = '#dbdbdb';
@@ -229,6 +230,8 @@ var TmpCommands = [];
     FreeCommands.push(new FreeCommand("/STOPSALES", StopSalesCallback, StopSalesHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/STARTSALES", StartSalesCallback, StartSalesHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/ADD", AddTicketCallback, AddTicketHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/SILENCE", SilenceCallback, SilenceHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/UNSILENCE", UnsilenceCallback, UnsilenceHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/BC", BCCallback, BCHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/TM", TMCallback, TMHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/TBM", TBMCallback, TBMHelpCallback, true, true));
@@ -672,6 +675,54 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 //FREE COMMAND CALLBACKS
 //#region
 
+function SilenceCallback(user, message, rawMsgData) {
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
+        let match = message.match(/^(\/silence)\s+(\S+)$/);
+
+        if (match) {
+
+            let [_, command, name] = match;
+
+            if (activeUser(name)) {
+                UserInfo.mutedUsers[name] = name;
+                cb.sendNotice(`You have been silenced`, name, red);
+                cb.sendNotice(`${name} has been silenced`, user, red);
+            }
+        }
+    }
+    else {
+        cb.sendNotice(`You must be a mod to use this command`, user, red);
+    }
+}
+
+function SilenceHelpCallback(user, message, rawMsgData) {
+    return "Mutes a user's messages";
+}
+
+function UnsilenceCallback(user, message, rawMsgData) {
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
+        let match = message.match(/^(\/unsilence)\s+(\S+)$/);
+
+        if (match) {
+
+            let [_, command, name] = match;
+
+            if (activeUser(name) && UserInfo.mutedUsers[name]) {
+                delete UserInfo.mutedUsers[name];
+                cb.sendNotice(`You have been unsilenced`, name, blue);
+                cb.sendNotice(`${name} has been unsilenced`, user, red);
+            }
+        }
+    }
+    else {
+        cb.sendNotice(`You must be a mod to use this command`, user, red);
+    }
+}
+
+function UnsilenceHelpCallback(user, message, rawMsgData) {
+    return "Allows a user who has been silenced to speak again. | usage: /unsilence [username]";
+}
+
 function GoalsCallback(user, message, rawMsgData) {
 
     var length1 = goalInfo.goal1Queue.length;
@@ -846,9 +897,9 @@ function PrefixCallback(user, message, rawMsgData) {
         let [_, command, prefix] = match;
 
         if (match) {
-            cb.sendNotice(`Your prefix is now: ${prefix}`, username, gold, blue, 'bold');
+            cb.sendNotice(`Your prefix is now: ${prefix}`, user, gold, blue, 'bold');
 
-            UserInfo.customPrefixes[username] = prefix;
+            UserInfo.customPrefixes[user] = prefix;
         }
         else {
             cb.chatNotice("Syntax error! Use /prefix [prefix]", user, purple);
@@ -865,7 +916,7 @@ function PrefixHelpCallback(user, message, rawMsgData) {
 }
 
 function WhisperCallback(user, message, rawMsgData) {
-    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || message['in_fanclub'])) {
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || rawMsgData['in_fanclub'])) {
 
         let match = message.match(/^(\/whisper)\s+(\S+)\s+(.*)$/);
 
@@ -927,8 +978,8 @@ function TMCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(3);
 
-        for (var user in UserInfo.activeUsers) {
-            let curUser = UserInfo.activeUsers[user];
+        for (var userL in UserInfo.activeUsers) {
+            let curUser = UserInfo.activeUsers[userL];
 
             if (curUser['is_mod']) {
                 cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], gold, red, 'bold');
@@ -1801,36 +1852,41 @@ cb.onMessage(function (message) {
                 }
             }
         }
-    }
 
-    if (!commandUsed) {
-        //check to see if they misused the tip commands by typing them without tipping
-        var length = Commands.length;
-        for (i = 0; i < length; i++) {
-            var cmd = Commands[i];
 
-            if (msg.toUpperCase().includes(cmd.name)) {
-                message['X-Spam'] = true;
+        if (!commandUsed) {
+            //check to see if they misused the tip commands by typing them without tipping
 
-                //cb.chatNotice("The commands in this bot are tip commands. In order to use them you must use them in a tip memo. type '/help' for more info!", user, purple);
-            }
-        }
-
-        //look to see if the message is a tmpcommand (this must happen last so that these dont trigger when you type '/addcom' to update a command)
-        if (cb.settings['addcom'] == 1) {
-            var length = TmpCommands.length;
+            var length = Commands.length;
             for (i = 0; i < length; i++) {
-                var cmd = TmpCommands[i];
+                var cmd = Commands[i];
 
-                if (msg.toUpperCase().includes(cmd.name.toUpperCase())) {
-                    cb.chatNotice(cmd.reply, '', purple);
+                if (commandname.toUpperCase() == cmd.name) {
+                    message['X-Spam'] = true;
+
+                    cb.chatNotice("These commands are meant to be used as a tip memo and accompanied by a tip", user, red);
+                }
+            }
+
+            //look to see if the message is a tmpcommand (this must happen last so that these dont trigger when you type '/addcom' to update a command)
+            if (cb.settings['addcom'] == 1) {
+                var length = TmpCommands.length;
+                for (i = 0; i < length; i++) {
+                    var cmd = TmpCommands[i];
+
+                    if (commandname.toUpperCase() == cmd.name) {
+                        cb.chatNotice(cmd.reply, '', purple);
+                    }
                 }
             }
         }
     }
 
-    if(message['X-Spam'])
-    {
+    if (UserInfo.mutedUsers[user]) {
+        message['X-Spam'] = true;
+    }
+
+    if (message['X-Spam']) {
         message['background'] = grey;
     }
 
