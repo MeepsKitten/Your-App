@@ -16,6 +16,10 @@ cb.settings_choices = [
     { name: 'ticketprice', type: 'int', minValue: 0, defaultValue: 25, label: "TICKET SHOW OPTIONS -------- Ticket Show Ticket price" },
     { name: 'ticketpricemult', type: 'int', minValue: 0, defaultValue: 2, label: "Ticket Show Ticket price increse multiplier after started" },
 
+    { name: 'goal', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "GOAL OPTIONS --------  Goal functionality (0 for disable, 1 for enable)" },
+    { name: 'goalRollover', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Goal tip rollover: if a goal is finished the rest of the tip will roll over to the next goal if it exsists (0 for disable, 1 for enable)" },
+
+
     { name: 'adaptiveMenu', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "TIP MENU OPTIONS -------- Adaptive tip menu (0 to disable 1 to enable)" },
     { name: 'feete', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Feet command (0 to disable 1 to enable)" },
     { name: 'feet', type: 'int', minValue: 0, defaultValue: 10, label: "Feet command cost" },
@@ -44,7 +48,6 @@ cb.settings_choices = [
     { name: 'toyname', type: 'str', minLength: 1, maxLength: 255, defaultValue: 'my pee-pee', label: "Toy name (for toy command)" },
 
     { name: 'addcom', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "COMMAND OPTIONS -------- /Addcom functionality (0 for disable, 1 for enable)" },
-    { name: 'goal', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Passive Goal functionality (0 for disable, 1 for enable)" },
     { name: 'tiptimer', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Tip Timer functionality (0 for disable, 1 for enable)" },
     { name: 'tiptimercost', type: 'int', minValue: 0, defaultValue: 25, label: "Tip cost to increase timer" },
     { name: 'tiptimerinc', type: 'int', minValue: 0, defaultValue: 25, label: "The ammount of second a tip increses the timer by" },
@@ -92,6 +95,8 @@ const tipInfo = {
 const goalInfo = {
     goal: 0,
     goal2: 0,
+    goalstart: 0,
+    goal2start: 0,
     goalTitleTag: "",
     goal2TitleTag: "",
     StreamTitle: cb.settings['title'],
@@ -117,7 +122,9 @@ const UserInfo = {
 
 //text info
 var purple = "#C287C2";
+var darkpurple = "#3a004c";
 var red = "#f4a6a6";
+var darkred = "#840000";
 var blue = "#00e1ff";
 var gold = '#e6e655';
 var grey = '#dbdbdb';
@@ -404,7 +411,13 @@ function setGoal(user, goal, goalText, amount) {
             }
             else {
                 goalInfo.goalTitleTag = goalText;
-                cb.sendNotice("New goal set!\nGoal: " + goalInfo.goalTitleTag + " " + goalInfo.goal + " Tokens!", '', blue);
+                goalInfo.goalstart = goalInfo.goal;
+                if (goalInfo.goal > 1 || goalInfo.goal == 0) {
+                    cb.sendNotice("New goal set!\nGoal: " + goalInfo.goalTitleTag + " " + goalInfo.goal + " Tokens!", '', gold, blue);
+                }
+                else {
+                    cb.sendNotice("New goal set!\nGoal: " + goalInfo.goalTitleTag + " " + goalInfo.goal + " Token!", '', gold, blue);
+                }
                 UpdateDisplay(true);
             }
         }
@@ -418,7 +431,13 @@ function setGoal(user, goal, goalText, amount) {
             }
             else {
                 goalInfo.goal2TitleTag = goalText;
-                cb.sendNotice("New goal set!\nGoal 2: " + goalInfo.goal2TitleTag + " " + goalInfo.goal2 + " Tokens!", '', blue);
+                goalInfo.goal2start = goalInfo.goal2;
+                if (goalInfo.goal > 1 || goalInfo.goal == 0) {
+                    cb.sendNotice("New goal set!\nGoal: " + goalInfo.goal2TitleTag + " " + goalInfo.goal2 + " Tokens!", '', gold, blue);
+                }
+                else {
+                    cb.sendNotice("New goal set!\nGoal: " + goalInfo.goal2TitleTag + " " + goalInfo.goal2 + " Token!", '', gold, blue);
+                }
                 UpdateDisplay(true);
             }
         }
@@ -434,9 +453,12 @@ function setGoal(user, goal, goalText, amount) {
     }
 }
 
-function updateGoalQueues() {
+function updateGoalQueues(newgoal = false) {
     if (goalInfo.goal <= 0) {
         let nextGoal = goalInfo.goal1Queue[0];
+        if (!newgoal && goalInfo.goalTitleTag)
+            cb.sendNotice("Goal Cleared: " + goalInfo.goalTitleTag + " " + goalInfo.goalstart + " Tokens", '', darkpurple, blue, 'bold');
+
         if (nextGoal) {
             setGoal('', 1, nextGoal['text'], nextGoal['amount']);
             goalInfo.goal1Queue.shift();
@@ -444,6 +466,8 @@ function updateGoalQueues() {
     }
     if (goalInfo.goal2 <= 0) {
         let nextGoal = goalInfo.goal2Queue[0];
+        if (!newgoal && goalInfo.goal2TitleTag)
+            cb.sendNotice("Goal Cleared: " + goalInfo.goal2TitleTag + " " + goalInfo.goal2start + " Tokens", '', darkpurple, blue, 'bold');
         if (nextGoal) {
             setGoal('', 2, nextGoal['text'], nextGoal['amount']);
             goalInfo.goal2Queue.shift();
@@ -804,7 +828,7 @@ function QueueGoalCallback(user, message, rawMsgData) {
                     cb.sendNotice("Invalid goal number (choose goal 1 or 2)", user, red)
                 }
 
-                updateGoalQueues();
+                updateGoalQueues(true);
             }
             else {
                 cb.sendNotice("Invalid goal message or amount", user, red)
@@ -926,8 +950,8 @@ function WhisperCallback(user, message, rawMsgData) {
             if (activeUser(username)) {
                 rawMsgData['m'] = 'Sending whisper...';
 
-                cb.chatNotice(`${user} -> ${username}: ${whisper}`, user, gold, red, 'bold');
-                cb.chatNotice(`${user} -> ${username}: ${whisper}`, username, gold, red, 'bold');
+                cb.chatNotice(`${user} -> ${username}: ${whisper}`, user, gold, darkred, 'bold');
+                cb.chatNotice(`${user} -> ${username}: ${whisper}`, username, gold, darkred, 'bold');
             }
             else {
                 cb.sendNotice(`User ${username} does not exsist!`, user, red);
@@ -949,8 +973,8 @@ function BCCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(3);
 
-        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, cb.room_slug, gold, red, 'bold');
-        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, user, gold, red, 'bold');
+        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, cb.room_slug, gold, darkred, 'bold');
+        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, user, gold, darkred, 'bold');
 
         rawMsgData['m'] = 'Sending notice...';
     }
@@ -982,7 +1006,7 @@ function TMCallback(user, message, rawMsgData) {
             let curUser = UserInfo.activeUsers[userL];
 
             if (curUser['is_mod']) {
-                cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], gold, red, 'bold');
+                cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], gold, darkred, 'bold');
             }
         }
 
@@ -998,13 +1022,13 @@ function TBMCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(4);
 
-        cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, gold, red, 'bold');
+        cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, gold, darkred, 'bold');
 
         for (var user in UserInfo.activeUsers) {
             let curUser = UserInfo.activeUsers[user];
 
             if (curUser['is_mod']) {
-                cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], gold, red, 'bold');
+                cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], gold, darkred, 'bold');
             }
         }
 
@@ -1611,6 +1635,56 @@ function KassHelpCallback() {
 //#endregion
 //END OF FREE CALLBACKS
 
+function UpdateGoals(tipped, goal) {
+    if (goal == 0 || goal == 1) {
+        if (goalInfo.goal > 0) {
+            if ((goalInfo.goal - tipped) <= 0) {
+                tipped -= goalInfo.goal;
+                goalInfo.goal = 0;
+                updateGoalQueues();
+                if (cb.settings['goalRollover']) {
+                    if (goalInfo.goal > 0) {
+                        UpdateGoals(tipped, 1);
+                    }
+                }
+            }
+            else if (tipped > 0) {
+                goalInfo.goal -= tipped;
+            }
+
+            UpdateDisplay(true);
+
+
+        }
+        else {
+            updateGoalQueues(true);
+        }
+    }
+
+    if (goal == 0 || goal == 2) {
+        if (goalInfo.goal2 > 0) {
+            if ((goalInfo.goal2 - tipped) <= 0) {
+                tipped -= goalInfo.goal2;
+                goalInfo.goal2 = 0;
+                updateGoalQueues();
+                if (cb.settings['goalRollover']) {
+                    if (goalInfo.goal2 > 0) {
+                        UpdateGoals(tipped, 2);
+                    }
+                }
+            }
+            else {
+                goalInfo.goal2 -= tipped;
+                UpdateDisplay(false);
+            }
+
+        }
+        else {
+            updateGoalQueues(true);
+        }
+    }
+}
+
 cb.onTip(function (tip) {
     var tippedOrg = parseInt(tip['amount']);
 
@@ -1637,41 +1711,7 @@ cb.onTip(function (tip) {
 
     tipInfo.totalTipped += tipped;
 
-
-    if (goalInfo.goal > 0) {
-        if ((goalInfo.goal - tipped) <= 0) {
-            goalInfo.goal = 0;
-            updateGoalQueues();
-
-        }
-        else {
-            goalInfo.goal -= tipped;
-        }
-
-        UpdateDisplay(true);
-
-
-    }
-    else {
-        updateGoalQueues();
-    }
-
-
-    if (goalInfo.goal2 > 0) {
-        if ((goalInfo.goal2 - tipped) <= 0) {
-            goalInfo.goal2 = 0;
-            updateGoalQueues();
-
-        }
-        else {
-            goalInfo.goal2 -= tipped;
-            UpdateDisplay(false);
-        }
-
-    }
-    else {
-        updateGoalQueues();
-    }
+    UpdateGoals(tipped, 0);
 
     var containsExplicitInvokation = false;
 
@@ -1888,6 +1928,14 @@ cb.onMessage(function (message) {
 
     if (message['X-Spam']) {
         message['background'] = grey;
+    }
+
+    if(msg[0] == '/' && !commandUsed)
+    {
+        message['X-Spam'] = true;
+        let oldmsg = message['m'];
+        message['background'] = red;
+        message['m'] = "Invalid Command: " + oldmsg;
     }
 
     return message;
