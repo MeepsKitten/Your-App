@@ -19,6 +19,24 @@ cb.settings_choices = [
     { name: 'goal', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "GOAL OPTIONS --------  Goal functionality (0 for disable, 1 for enable)" },
     { name: 'goalRollover', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Goal tip rollover: if a goal is finished the rest of the tip will roll over to the next goal if it exsists (0 for disable, 1 for enable)" },
 
+    { name: 'machinee', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "FUCK MACHINE OPTIONS -------- Fuck Machine functionality (0 for disable, 1 for enable)" },
+    { name: 'machineNotice', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Automatically send notices with levels (0 for disable, 1 for enable)" },
+    { name: 'machine1', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 1" },
+    { name: 'machine1cost', type: 'int', minValue: 1, defaultValue: 1, label: "    Cost" },
+    { name: 'machine1time', type: 'int', minValue: 1, defaultValue: 2, label: "    Time (in seconds)" },
+    { name: 'machine2', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 2" },
+    { name: 'machine2cost', type: 'int', minValue: 1, defaultValue: 25, label: "    Cost" },
+    { name: 'machine2time', type: 'int', minValue: 1, defaultValue: 15, label: "    Time (in seconds)" },
+    { name: 'machine3', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 3" },
+    { name: 'machine3cost', type: 'int', minValue: 1, defaultValue: 75, label: "    Cost" },
+    { name: 'machine3time', type: 'int', minValue: 1, defaultValue: 30, label: "    Time (in seconds)" },
+    { name: 'machine4', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 4" },
+    { name: 'machine4cost', type: 'int', minValue: 1, defaultValue: 100, label: "    Cost" },
+    { name: 'machine4time', type: 'int', minValue: 1, defaultValue: 45, label: "    Time (in seconds)" },
+    { name: 'machine5', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'High', label: "Level 5" },
+    { name: 'machine5cost', type: 'int', minValue: 1, defaultValue: 150, label: "    Cost" },
+    { name: 'machine5time', type: 'int', minValue: 1, defaultValue: 35, label: "    Time (in seconds)" },
+
 
     { name: 'adaptiveMenu', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "TIP MENU OPTIONS -------- Adaptive tip menu (0 to disable 1 to enable)" },
     { name: 'feete', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Feet command (0 to disable 1 to enable)" },
@@ -120,6 +138,14 @@ const UserInfo = {
     customPrefixes: {},
 }
 
+const FuckMacineInfo = {
+    levels: [],
+    queue: [],
+    noticeTimeout: undefined,
+    queueTimeout: undefined,
+    enabled: cb.settings['machinee'],
+}
+
 //text info
 var purple = "#C287C2";
 var darkpurple = "#3a004c";
@@ -128,6 +154,8 @@ var darkred = "#840000";
 var blue = "#00e1ff";
 var gold = '#e6e655';
 var grey = '#dbdbdb';
+var black = '#000000';
+var white = '#ffffff';
 var fontSize = 11;
 var smallfontSize = 9;
 
@@ -182,6 +210,22 @@ var Commands = [];
 var FreeCommands = [];
 var TmpCommands = [];
 
+//machine init
+if (cb.settings['machinee']) {
+
+    if (cb.settings['machine1'].length > 0)
+        FuckMacineInfo.levels[cb.settings['machine1cost']] = { level: 1, name: cb.settings['machine1'], time: cb.settings['machine1time'] };
+    if (cb.settings['machine2'].length > 0)
+        FuckMacineInfo.levels[cb.settings['machine2cost']] = { level: 2, name: cb.settings['machine2'], time: cb.settings['machine2time'] };
+    if (cb.settings['machine3'].length > 0)
+        FuckMacineInfo.levels[cb.settings['machine3cost']] = { level: 3, name: cb.settings['machine3'], time: cb.settings['machine3time'] };
+    if (cb.settings['machine4'].length > 0)
+        FuckMacineInfo.levels[cb.settings['machine4cost']] = { level: 4, name: cb.settings['machine4'], time: cb.settings['machine4time'] };
+    if (cb.settings['machine5'].length > 0)
+        FuckMacineInfo.levels[cb.settings['machine5cost']] = { level: 5, name: cb.settings['machine5'], time: cb.settings['machine5time'] };
+
+}
+
 //add paid commands to list
 {
     if (cb.settings['adaptiveMenu']) {
@@ -206,7 +250,7 @@ var TmpCommands = [];
 {
     //add extras if enabled
     if (cb.settings['extras'] == 1) {
-        FreeCommands.push(new FreeCommand("/KASS", KassCallback, KassHelpCallback, true, false));
+        FreeCommands.push(new FreeCommand("/KASS", KassCallback, KassHelpCallback, true, true));
 
         backgrounds['meeps'] = "85c01932-c376-4449-a47d-33cad12521d3";
         backgrounds['coolcat'] = "a52b8728-516f-4fb1-b11f-b9ee41cd83d6";
@@ -219,6 +263,11 @@ var TmpCommands = [];
         backgrounds['nosebleed'] = "f5527216-4db6-4379-96b0-f3564649049b";
         backgrounds['hypno'] = "8a22975c-cf26-4d65-967f-77a04a5ddbcc";
         backgrounds['purr'] = "cba81fd1-058e-46b7-b5ea-871ff6d46530";
+    }
+
+    if (FuckMacineInfo.enabled == 1) {
+        FreeCommands.push(new FreeCommand("/LEVELS", LevelsCallback, LevelsHelpCallback, true, true));
+        FreeCommands.push(new FreeCommand("/LEVELSREMINDER", LevelsReminderCallback, LevelsReminderCallback, true, true));
     }
 
     /// invocation
@@ -251,6 +300,7 @@ var TmpCommands = [];
     FreeCommands.push(new FreeCommand("/LEADERBOARD", LeaderboardCallback, LeaderboardHelpCallback, cb.settings['rewardsenabled'], true));
     FreeCommands.push(new FreeCommand("/GOALS", GoalsCallback, GoalsHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/TIPMENU", TipMenuCallback, TipMenuHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/MENU", TipMenuCallback, TipMenuHelpCallback, true, true));
 }
 
 
@@ -375,6 +425,16 @@ function CreateNewTimer() {
     UpdateTimer();
 }
 
+function SetTimer(seconds) {
+    if (!timerInfo.running) {
+        timerInfo.timerLength = seconds + cb.settings['timerupdate'];
+        CreateNewTimer();
+    }
+    else {
+        timerInfo.timerLength = seconds + cb.settings['timerupdate'];
+    }
+}
+
 function SetGiftPrice(price) {
     let cmd = FindCommandInfo("/GIFT", Commands);
 
@@ -475,11 +535,57 @@ function updateGoalQueues(newgoal = false) {
     }
 }
 
+function FuckMachineCheck(tipped, user) {
+    if (FuckMacineInfo.enabled) {
+        var arrayLength = FuckMacineInfo.levels.length;
+        var bestOption = 0;
+
+        for (var i = 0; i < arrayLength; i++) {
+            if (tipped >= i && (i != 0)) {
+                if (i > bestOption && FuckMacineInfo.levels[i]) {
+                    bestOption = i;
+                }
+            }
+        }
+
+        let level = FuckMacineInfo.levels[bestOption];
+        if (level) {
+
+            FuckMacineInfo.queue.push({ text: `${user} activated the machine at level ${level['level']} ("${level['name']}") for ${level['time']} seconds`, time: level['time'] })
+            if (!FuckMacineInfo.queueTimeout) {
+                ExecuteQueuedTips();
+            }
+            else {
+                cb.sendNotice(`Tip at level ${level['level']} ("${level['name']}") for ${level['time']} seconds added to queue. (Spot ${FuckMacineInfo.queue.length})`, '', darkpurple, blue, 'bold')
+            }
+        }
+
+    }
+}
+
+function ExecuteQueuedTips() {
+    let object = FuckMacineInfo.queue[0];
+    let length = FuckMacineInfo.queue.length;
+    FuckMacineInfo.queue.shift();
+
+    if (object) {
+
+        cb.sendNotice(object['text'], '', gold, darkred, 'bold');
+        SetTimer(object['time']);
+        FuckMacineInfo.queueTimeout = cb.setTimeout(ExecuteQueuedTips, 1000 * object['time'])
+    }
+    else {
+        cb.cancelTimeout(FuckMacineInfo.queueTimeout);
+        FuckMacineInfo.queueTimeout = undefined;
+    }
+}
+
 //#endregion
 //END OF HELPER FUNCTIONS
 
 //PAID COMMAND CALLBACKS
 //#region
+
 function StopCallback(cmd, sucess, tipped, user, to, message) {
     if (sucess == true) {
         cb.chatNotice(user + " requested for " + to + " to stop playing with themself for " + tipped + " seconds", '', purple);
@@ -698,6 +804,42 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 
 //FREE COMMAND CALLBACKS
 //#region
+
+function LevelsCallback(user, message, rawMsgData) {
+    let arrayLength = FuckMacineInfo.levels.length;
+    let text = "Fuck machine levels:";
+    for (var i = 0; i < arrayLength; i++) {
+        if (FuckMacineInfo.levels[i]) {
+            text += '\n'
+            let level = FuckMacineInfo.levels[i];
+            text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+        }
+    }
+    cb.sendNotice(text, user, white, darkpurple, 'bold');
+}
+
+function LevelsHelpCallback(user, message, rawMsgData) {
+    return "Shows you a list of fuck machine levels";
+}
+
+function LevelsReminderCallback(user, message, rawMsgData) {
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
+        let arrayLength = FuckMacineInfo.levels.length;
+        let text = "Fuck machine levels:";
+        for (var i = 0; i < arrayLength; i++) {
+            if (FuckMacineInfo.levels[i]) {
+                text += '\n'
+                let level = FuckMacineInfo.levels[i];
+                text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+            }
+        }
+        cb.sendNotice(text, '', white, darkpurple, 'bold');
+    }
+}
+
+function LevelsReminderHelpCallback(user, message, rawMsgData) {
+    return "(MODS ONLY) Shows a list of fuck machine levels to all users";
+}
 
 function SilenceCallback(user, message, rawMsgData) {
     if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
@@ -950,8 +1092,8 @@ function WhisperCallback(user, message, rawMsgData) {
             if (activeUser(username)) {
                 rawMsgData['m'] = 'Sending whisper...';
 
-                cb.chatNotice(`${user} -> ${username}: ${whisper}`, user, gold, darkred, 'bold');
-                cb.chatNotice(`${user} -> ${username}: ${whisper}`, username, gold, darkred, 'bold');
+                cb.chatNotice(`${user} -> ${username}: ${whisper}`, user, black, white, 'bold');
+                cb.chatNotice(`${user} -> ${username}: ${whisper}`, username, black, white, 'bold');
             }
             else {
                 cb.sendNotice(`User ${username} does not exsist!`, user, red);
@@ -973,8 +1115,8 @@ function BCCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(3);
 
-        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, cb.room_slug, gold, darkred, 'bold');
-        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, user, gold, darkred, 'bold');
+        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, cb.room_slug, black, white, 'bold');
+        cb.chatNotice(`${user} -> ${cb.room_slug}: ${msgNoHead}`, user, black, white, 'bold');
 
         rawMsgData['m'] = 'Sending notice...';
     }
@@ -988,7 +1130,7 @@ function CNCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(3);
 
-        cb.chatNotice(msgNoHead, '', blue, '', 'bold');
+        cb.chatNotice(msgNoHead, '', darkpurple, blue, 'bold');
 
         rawMsgData['m'] = 'Sending notice...';
     }
@@ -1006,7 +1148,7 @@ function TMCallback(user, message, rawMsgData) {
             let curUser = UserInfo.activeUsers[userL];
 
             if (curUser['is_mod']) {
-                cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], gold, darkred, 'bold');
+                cb.chatNotice(`${user} -> Mods: ${msgNoHead}`, curUser['user'], black, white, 'bold');
             }
         }
 
@@ -1022,13 +1164,13 @@ function TBMCallback(user, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(4);
 
-        cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, gold, darkred, 'bold');
+        cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, black, white, 'bold');
 
         for (var user in UserInfo.activeUsers) {
             let curUser = UserInfo.activeUsers[user];
 
             if (curUser['is_mod']) {
-                cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], gold, darkred, 'bold');
+                cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], black, white, 'bold');
             }
         }
 
@@ -1386,7 +1528,7 @@ function TipMenuCallback(user, message, rawMsgData) {
         }
     }
 
-    cb.chatNotice(help, user, purple);
+    cb.chatNotice(help, user, white, darkpurple, 'bold');
     cb.chatNotice("This bot was coded by the model Meepsalot", user, blue);
 
 }
@@ -1407,7 +1549,7 @@ function ReminderCallback(user, message, rawMsgData) {
             }
         }
 
-        cb.chatNotice(help, '', purple);
+        cb.chatNotice(help, '', white, darkpurple, 'bold');
 
         cb.chatNotice("This bot was coded by the model Meepsalot", '', blue);
     }
@@ -1713,6 +1855,8 @@ cb.onTip(function (tip) {
 
     UpdateGoals(tipped, 0);
 
+    FuckMachineCheck(tipped, user);
+
     var containsExplicitInvokation = false;
 
     var length = Commands.length;
@@ -1916,6 +2060,7 @@ cb.onMessage(function (message) {
 
                     if (commandname.toUpperCase() == cmd.name) {
                         cb.chatNotice(cmd.reply, '', purple);
+                        commandUsed = true;
                     }
                 }
             }
@@ -1930,8 +2075,7 @@ cb.onMessage(function (message) {
         message['background'] = grey;
     }
 
-    if(msg[0] == '/' && !commandUsed)
-    {
+    if (msg[0] == '/' && !commandUsed) {
         message['X-Spam'] = true;
         let oldmsg = message['m'];
         message['background'] = red;
