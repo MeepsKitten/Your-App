@@ -285,6 +285,7 @@ if (cb.settings['machinee']) {
     FreeCommands.push(new FreeCommand("/STOPSHOW", StopShowCallback, StopShowHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/STOPSALES", StopSalesCallback, StopSalesHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/STARTSALES", StartSalesCallback, StartSalesHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/MACHINE", MachineCallback, MachineHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/ADD", AddTicketCallback, AddTicketHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/SILENCE", SilenceCallback, SilenceHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/UNSILENCE", UnsilenceCallback, UnsilenceHelpCallback, true, true));
@@ -672,7 +673,7 @@ function FeetHelpCallback(cmd, user) {
 
 function SpankCallback(cmd, sucess, tipped, user, to, message) {
     if (sucess == true) {
-        var num = tipped / 15;
+        var num = tipped / cmd.cost;
         cb.chatNotice(user + " requests " + num + " spanks", '', purple);
     }
     else {
@@ -804,6 +805,22 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 
 //FREE COMMAND CALLBACKS
 //#region
+
+function MachineCallback(user, message, rawMsgData) {
+
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
+        if (FuckMacineInfo.enabled) {
+            FuckMacineInfo.enabled = false;
+        }
+        else {
+            FuckMacineInfo.enabled = true;
+        }
+    }
+}
+
+function MachineHelpCallback(user, message, rawMsgData) {
+    return "(MODS ONLY) Toggles the Fuck Machine levels";
+}
 
 function LevelsCallback(user, message, rawMsgData) {
     let arrayLength = FuckMacineInfo.levels.length;
@@ -1160,17 +1177,17 @@ function TMHelpCallback(user, message, rawMsgData) {
     return String("Allows mods to send an inline PM to all other mods");
 }
 
-function TBMCallback(user, message, rawMsgData) {
+function TBMCallback(username, message, rawMsgData) {
     if (rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug) {
         var msgNoHead = message.substr(4);
 
-        cb.chatNotice(`${user} -> B&M: ${msgNoHead}`, cb.room_slug, black, white, 'bold');
+        cb.chatNotice(`${username} -> B&M: ${msgNoHead}`, cb.room_slug, black, white, 'bold');
 
         for (var user in UserInfo.activeUsers) {
             let curUser = UserInfo.activeUsers[user];
 
             if (curUser['is_mod']) {
-                cb.chatNotice(`${user}: ${msgNoHead}`, curUser['user'], black, white, 'bold');
+                cb.chatNotice(`${username}: ${msgNoHead}`, curUser['user'], black, white, 'bold');
             }
         }
 
