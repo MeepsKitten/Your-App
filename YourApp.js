@@ -102,6 +102,11 @@ const ticketShowInfo = {
     active: false,
 };
 
+const streamInfo =
+{
+    startTime: 0,
+}
+
 const tipInfo = {
     totalTipped: 0,
     HighestTipEver: {},
@@ -298,12 +303,17 @@ if (cb.settings['machinee']) {
     FreeCommands.push(new FreeCommand("/ADDCOM", AddcomCallback, AddcomHelpCallback, cb.settings['addcom'], false));
     FreeCommands.push(new FreeCommand("/CLEARPREFIX", ClearPrefixCallback, ClearPrefixHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/PREFIX", PrefixCallback, PrefixHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/UPTIME", UptimeCallback, UptimeHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/LEADERBOARD", LeaderboardCallback, LeaderboardHelpCallback, cb.settings['rewardsenabled'], true));
     FreeCommands.push(new FreeCommand("/GOALS", GoalsCallback, GoalsHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/TIPMENU", TipMenuCallback, TipMenuHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/MENU", TipMenuCallback, TipMenuHelpCallback, true, true));
+
+
 }
 
+//mark stream start
+streamInfo.startTime = new Date();
 
 //HELPER FUNCTIONS
 //#region
@@ -631,50 +641,51 @@ function BjHelpCallback(cmd, user) {
     return String("\n[" + cmd.cost + " or more Tokens] - '/bj' one of the performers will give the other for [amount tipped] seconds. Feel free to specify which performer!");
 }
 
-function FingerCallback(cmd, sucess, tipped, user, to, message) {
+function FingerCallback(cmdl, sucess, tipped, user, to, message) {
     if (sucess == true) {
         cb.chatNotice(user + " wants " + to + " to finger themselves (1 finger)", '', purple);
     }
     else {
-        NotEnoughTokens(cmd.cost, user, to, tipped, "finger");
+        NotEnoughTokens(cmdl.cost, user, to, tipped, "finger");
     }
 }
 
-function FingerHelpCallback(cmd, user) {
-    return String("\n[" + cmd.cost + " or more Tokens] - '/finger' the performer will finger themselves with 1 finger.");
+function FingerHelpCallback(cmdl, user) {
+    return String("\n[" + cmdl.cost + " or more Tokens] - '/finger' the performer will finger themselves with 1 finger.");
 }
 
-function FingersCallback(cmd, sucess, tipped, user, to, message) {
+function FingersCallback(cmdl, sucess, tipped, user, to, message) {
     if (sucess == true) {
         cb.chatNotice(user + " wants " + to + " to finger themselves (2 fingers)", '', purple);
     }
     else {
-        NotEnoughTokens(cmd.cost, user, to, tipped, "fingers");
+        NotEnoughTokens(cmdl.cost, user, to, tipped, "fingers");
     }
 }
 
-function FingersHelpCallback(cmd, user) {
-    return String("\n[" + cmd.cost + " or more Tokens] - '/fingers' the performer will finger themselves with 2 fingers.");
+function FingersHelpCallback(cmdl, user) {
+    return String("\n[" + cmdl.cost + " or more Tokens] - '/fingers' the performer will finger themselves with 2 fingers.");
 }
 
-function FeetCallback(cmd, sucess, tipped, user, to, message) {
+function FeetCallback(cmdl, sucess, tipped, user, to, message) {
     if (sucess == true) {
         var timeReq = (tipped / 10) * 2;
         cb.chatNotice(user + " requests to see feet for " + timeReq + " seconds", '', purple);
     }
     else {
-        NotEnoughTokens(cmd.cost, user, to, tipped, "Feet");
+        NotEnoughTokens(cmdl.cost, user, to, tipped, "Feet");
     }
 }
 
-function FeetHelpCallback(cmd, user) {
-    return String("\n[" + cmd.cost + " or more Tokens] - '/feet' brodcaster will show feet for ([amount tipped] / 10) * 2 seconds");
+function FeetHelpCallback(cmdl, user) {
+    return String("\n[" + cmdl.cost + " or more Tokens] - '/feet' brodcaster will show feet for ([amount tipped] / 10) * 2 seconds");
 }
 
-function SpankCallback(cmd, sucess, tipped, user, to, message) {
+function SpankCallback(cmdl, sucess, tipped, user, to, message) {
     if (sucess == true) {
-        var num = tipped / cmd.cost;
-        cb.chatNotice(user + " requests " + num + " spanks", '', purple);
+        var num = Math.floor(tipped / cmdl.cost);
+        let word = (num > 1 ? 'spanks' : 'spank');
+        cb.chatNotice(user + " requests " + num + " " + word, '', purple);
     }
     else {
         NotEnoughTokens(cmd.cost, user, to, tipped, "Spank");
@@ -805,6 +816,26 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 
 //FREE COMMAND CALLBACKS
 //#region
+
+function UptimeCallback(user, message, rawMsgData) {
+    var curTime = new Date();
+    var DeltaTime = ( curTime.getTime() - streamInfo.startTime) / 1000;
+
+    let hours = Math.floor(DeltaTime / 3600);
+    DeltaTime %= 3600;
+    let minutes = (Math.floor(DeltaTime / 60));
+    let seconds = (DeltaTime % 60).toFixed(0);
+
+    let paddedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    let paddedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    let paddedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+
+    cb.sendNotice(`Uptime: ${paddedHours}:${paddedMinutes}:${paddedSeconds}`, user, white, darkpurple, 'bold');
+}
+
+function UptimeHelpCallback(user, message, rawMsgData) {
+    return "Tells you how long the stream has been going (based on when the app is started, not the stream itself)";
+}
 
 function MachineCallback(user, message, rawMsgData) {
 
@@ -1063,7 +1094,9 @@ function PrefixCallback(user, message, rawMsgData) {
             if (prefix) {
                 if (activeUser(username)) {
                     cb.sendNotice(`Prefix set to ${prefix}`, user, gold, blue, 'bold');
-                    cb.sendNotice(`Your prefix is now: ${prefix}`, username, gold, blue, 'bold');
+
+                    if(user != username)
+                        cb.sendNotice(`${user} set your prefix to: ${prefix}`, username, gold, blue, 'bold');
 
                     UserInfo.customPrefixes[username] = prefix;
                 }
@@ -1071,6 +1104,10 @@ function PrefixCallback(user, message, rawMsgData) {
                     cb.sendNotice(`User ${username} does not exsist!`, user, red);
                 }
             }
+        }
+        else
+        {
+            cb.sendNotice(`Command syntax invalid. Try /prefix [username] [prefix]`, user, red);
         }
 
     }
@@ -1925,7 +1962,7 @@ cb.onTip(function (tip) {
             cb.chatNotice(rewardtxt, '', blue);
         }
         else if (length == 1) {
-            PossibleCmds[0].callback(cmd, true, tipped, user, to, String(tip['message']));
+            PossibleCmds[0].callback(PossibleCmds[0], true, tipped, user, to, String(tip['message']));
         }
     }
 
