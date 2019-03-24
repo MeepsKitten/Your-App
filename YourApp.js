@@ -1,5 +1,5 @@
 cb.settings_choices = [
-    { name: 'title', type: 'str', minLength: 1, maxLength: 255, defaultValue: "Follow Meepsalot", label: "--------Stream Title--------" },
+    { name: 'title', type: 'str', minLength: 1, maxLength: 255, defaultValue: "Follow Meepsalot on CB", label: "--------Stream Title--------" },
     { name: 'tags', type: 'str', minLength: 1, maxLength: 140, label: "Room Hastags" },
 
     { name: 'whispercost', type: 'int', minValue: 0, defaultValue: 0, label: "CHAT SETTINGS --------\nWhisper Cost [0 to disable] (after tipping this amount a user can use /whisper)" },
