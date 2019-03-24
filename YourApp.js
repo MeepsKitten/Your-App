@@ -2,43 +2,32 @@ cb.settings_choices = [
     { name: 'title', type: 'str', minLength: 1, maxLength: 255, defaultValue: "Follow Meepsalot", label: "--------Stream Title--------" },
     { name: 'tags', type: 'str', minLength: 1, maxLength: 140, label: "Room Hastags" },
 
-    { name: 'multiplier', type: 'int', minValue: 0, defaultValue: 1, label: "MODIFIERS -------- Tip Multiplier (all incoming tips will be multiplied by this amount)" },
-    { name: 'timerupdate', type: 'int', minValue: 0, defaultValue: 10, label: "How many seconds between timer updates?" },
+    { name: 'whispercost', type: 'int', minValue: 0, defaultValue: 0, label: "CHAT SETTINGS --------\nWhisper Cost [0 to disable] (after tipping this amount a user can use /whisper)" },
     { name: 'prefixesenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable chat prefixes (0 for disable, 1 for enable)" },
+    { name: 'addcom', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "/Addcom functionality (0 for disable, 1 for enable)" },
 
-    { name: 'rewardsenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "REWARD POINTS OPTIONS -------- Enable reward points (0 for disable, 1 for enable)" },
+    { name: 'multiplier', type: 'int', minValue: 0, defaultValue: 1, label: "MODIFIERS -------- \nTip Multiplier (all incoming tips will be multiplied by this amount)" },
+    { name: 'timerupdate', type: 'int', minValue: 0, defaultValue: 10, label: "How many seconds between timer updates?" },
+
+    { name: 'rewardsenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "REWARD POINTS OPTIONS --------\n Enable reward points (0 for disable, 1 for enable)" },
     { name: 'freeentryenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable free ticket show entry (0 for disable, 1 for enable)" },
     { name: 'freeentryamount', type: 'int', minValue: 0, defaultValue: 600, label: "Points required for free entry" },
     { name: 'spincooldown', type: 'int', minValue: 0, defaultValue: 60, label: "Time between spins (in seconds)" },
     { name: 'spinMin', type: 'int', minValue: 0, defaultValue: 5, label: "Minimum spin reward" },
     { name: 'spinMax', type: 'int', minValue: 0, defaultValue: 20, label: "Maximum spin reward" },
 
-    { name: 'ticketprice', type: 'int', minValue: 0, defaultValue: 25, label: "TICKET SHOW OPTIONS -------- Ticket Show Ticket price" },
+    { name: 'ticketprice', type: 'int', minValue: 0, defaultValue: 25, label: "TICKET SHOW OPTIONS --------\n Ticket Show Ticket price" },
     { name: 'ticketpricemult', type: 'int', minValue: 0, defaultValue: 2, label: "Ticket Show Ticket price increse multiplier after started" },
 
-    { name: 'goal', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "GOAL OPTIONS --------  Goal functionality (0 for disable, 1 for enable)" },
+    { name: 'goal', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "GOAL OPTIONS --------\n  Goal functionality (0 for disable, 1 for enable)" },
     { name: 'goalRollover', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Goal tip rollover: if a goal is finished the rest of the tip will roll over to the next goal if it exsists (0 for disable, 1 for enable)" },
 
-    { name: 'machinee', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "FUCK MACHINE OPTIONS -------- Fuck Machine functionality (0 for disable, 1 for enable)" },
-    { name: 'machineNotice', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Automatically send notices with levels (0 for disable, 1 for enable)" },
-    { name: 'machine1', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 1" },
-    { name: 'machine1cost', type: 'int', minValue: 1, defaultValue: 1, label: "    Cost" },
-    { name: 'machine1time', type: 'int', minValue: 1, defaultValue: 2, label: "    Time (in seconds)" },
-    { name: 'machine2', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 2" },
-    { name: 'machine2cost', type: 'int', minValue: 1, defaultValue: 25, label: "    Cost" },
-    { name: 'machine2time', type: 'int', minValue: 1, defaultValue: 15, label: "    Time (in seconds)" },
-    { name: 'machine3', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 3" },
-    { name: 'machine3cost', type: 'int', minValue: 1, defaultValue: 75, label: "    Cost" },
-    { name: 'machine3time', type: 'int', minValue: 1, defaultValue: 30, label: "    Time (in seconds)" },
-    { name: 'machine4', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 4" },
-    { name: 'machine4cost', type: 'int', minValue: 1, defaultValue: 100, label: "    Cost" },
-    { name: 'machine4time', type: 'int', minValue: 1, defaultValue: 45, label: "    Time (in seconds)" },
-    { name: 'machine5', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'High', label: "Level 5" },
-    { name: 'machine5cost', type: 'int', minValue: 1, defaultValue: 150, label: "    Cost" },
-    { name: 'machine5time', type: 'int', minValue: 1, defaultValue: 35, label: "    Time (in seconds)" },
+    { name: 'tiptimer', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "COMMAND OPTIONS --------\nTip Timer functionality (0 for disable, 1 for enable)" },
+    { name: 'tiptimercost', type: 'int', minValue: 0, defaultValue: 25, label: "Tip cost to increase timer" },
+    { name: 'tiptimerinc', type: 'int', minValue: 0, defaultValue: 25, label: "The ammount of second a tip increses the timer by" },
+    { name: 'extras', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Easter eggs (0 for disable, 1 for enable)" },
 
-
-    { name: 'adaptiveMenu', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "TIP MENU OPTIONS -------- Adaptive tip menu (0 to disable 1 to enable)" },
+    { name: 'adaptiveMenu', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "TIP MENU OPTIONS --------\n Adaptive tip menu (0 to disable 1 to enable)" },
     { name: 'feete', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Feet command (0 to disable 1 to enable)" },
     { name: 'feet', type: 'int', minValue: 0, defaultValue: 10, label: "Feet command cost" },
     { name: 'spanke', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Spank command (0 to disable 1 to enable)" },
@@ -65,11 +54,26 @@ cb.settings_choices = [
     { name: 'toy', type: 'int', minValue: 0, defaultValue: 100, label: "Toy command cost" },
     { name: 'toyname', type: 'str', minLength: 1, maxLength: 255, defaultValue: 'my pee-pee', label: "Toy name (for toy command)" },
 
-    { name: 'addcom', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "COMMAND OPTIONS -------- /Addcom functionality (0 for disable, 1 for enable)" },
-    { name: 'tiptimer', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Tip Timer functionality (0 for disable, 1 for enable)" },
-    { name: 'tiptimercost', type: 'int', minValue: 0, defaultValue: 25, label: "Tip cost to increase timer" },
-    { name: 'tiptimerinc', type: 'int', minValue: 0, defaultValue: 25, label: "The ammount of second a tip increses the timer by" },
-    { name: 'extras', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Easter eggs (0 for disable, 1 for enable)" },
+    { name: 'machinee', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "FUCK MACHINE OPTIONS --------\n Fuck Machine functionality (0 for disable, 1 for enable)" },
+    { name: 'machineNotice', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Automatically send notices with levels (0 for disable, 1 for enable)" },
+    { name: 'machine1', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 1" },
+    { name: 'machine1cost', type: 'int', minValue: 1, defaultValue: 1, label: "    Cost" },
+    { name: 'machine1time', type: 'int', minValue: 1, defaultValue: 2, label: "    Time (in seconds)" },
+    { name: 'machine2', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 2" },
+    { name: 'machine2cost', type: 'int', minValue: 1, defaultValue: 25, label: "    Cost" },
+    { name: 'machine2time', type: 'int', minValue: 1, defaultValue: 15, label: "    Time (in seconds)" },
+    { name: 'machine3', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 3" },
+    { name: 'machine3cost', type: 'int', minValue: 1, defaultValue: 75, label: "    Cost" },
+    { name: 'machine3time', type: 'int', minValue: 1, defaultValue: 30, label: "    Time (in seconds)" },
+    { name: 'machine4', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 4" },
+    { name: 'machine4cost', type: 'int', minValue: 1, defaultValue: 100, label: "    Cost" },
+    { name: 'machine4time', type: 'int', minValue: 1, defaultValue: 45, label: "    Time (in seconds)" },
+    { name: 'machine5', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'High', label: "Level 5" },
+    { name: 'machine5cost', type: 'int', minValue: 1, defaultValue: 150, label: "    Cost" },
+    { name: 'machine5time', type: 'int', minValue: 1, defaultValue: 35, label: "    Time (in seconds)" },
+
+
+    
 ];
 
 var backgrounds = {
@@ -105,6 +109,8 @@ const ticketShowInfo = {
 const streamInfo =
 {
     startTime: 0,
+    totalSpanks: 0,
+    streamer: cb.room_slug,
 }
 
 const tipInfo = {
@@ -684,8 +690,9 @@ function FeetHelpCallback(cmdl, user) {
 function SpankCallback(cmdl, sucess, tipped, user, to, message) {
     if (sucess == true) {
         var num = Math.floor(tipped / cmdl.cost);
+        streamInfo.totalSpanks += num;
         let word = (num > 1 ? 'spanks' : 'spank');
-        cb.chatNotice(user + " requests " + num + " " + word, '', purple);
+        cb.chatNotice(`${user} requests ${num} ${word} (${streamInfo.totalSpanks} total)`, '', purple);
     }
     else {
         NotEnoughTokens(cmd.cost, user, to, tipped, "Spank");
@@ -1136,7 +1143,7 @@ function PrefixHelpCallback(user, message, rawMsgData) {
 }
 
 function WhisperCallback(user, message, rawMsgData) {
-    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || rawMsgData['in_fanclub'])) {
+    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug) || rawMsgData['in_fanclub']) || (cb.settings['whispercost'] > 0 && (tipInfo.AllTips[user] >= cb.settings['whispercost']))) {
 
         let match = message.match(/^(\/whisper)\s+(\S+)\s+(.*)$/);
 
@@ -1153,16 +1160,35 @@ function WhisperCallback(user, message, rawMsgData) {
                 cb.sendNotice(`User ${username} does not exsist!`, user, red);
             }
         }
+        else{
+            cb.sendNotice(`Command format not reconized. Try /whisper [user] [message]`, user, red);
+        }
 
     }
     else {
         rawMsgData['X-Spam'] = true;
-        cb.chatNotice("You must be a mod or be in the fan club to add commands", user, purple);
+        if(cb.settings['whispercost'] > 0)
+        {
+            let amount = tipInfo.AllTips[user] ? cb.settings['whispercost'] - tipInfo.AllTips[user] : cb.settings['whispercost']; 
+            cb.chatNotice(`You must tip ${amount} more to enable this command`, user, purple);
+        }
+        else
+            cb.chatNotice("You must be a mod or be in the fan club to add commands", user, red);
     }
 }
 
 function WhisperHelpCallback(user, message, rawMsgData) {
-    return String("Allows mods and fan club members to send an inline PM to a user | Usage: /whisper [username] [message]");
+    if(cb.settings['whispercost'] > 0)
+    {
+        let amount = tipInfo.AllTips[user] ? cb.settings['whispercost'] - tipInfo.AllTips[user] : cb.settings['whispercost'];
+        if(amount <= 0)         
+            return `[UNLOCKED] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;    
+        else
+            return `[TIP ${amount} TO UNLOCK] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;    
+
+    }
+        
+    return String("Allows mods and fan club members to send a PM to a user | Usage: /whisper [username] [message]");
 }
 
 function BCCallback(user, message, rawMsgData) {
@@ -1911,6 +1937,7 @@ cb.onTip(function (tip) {
 
     FuckMachineCheck(tipped, user);
 
+   
     var containsExplicitInvokation = false;
 
     var length = Commands.length;
@@ -1970,6 +1997,22 @@ cb.onTip(function (tip) {
 
     //if the key does not exsist initialize, otherwise add to its value
     tipInfo.AllTips[user] = (tipInfo.AllTips[user] || 0) + tippedOrg;
+
+     //Tell user of whisper status
+     if(cb.settings['whispercost'] > 0)
+     {
+        let usersTipTotal = tipInfo.AllTips[user]; 
+        if((usersTipTotal >= cb.settings['whispercost']) && ((usersTipTotal - tippedOrg) < cb.settings['whispercost']))
+        {
+            cb.chatNotice(`You can now use /whisper to privately message any user.\nType "/help /whisper" for more information on how to use it.`, user, blue);
+            cb.chatNotice(`${user} can now use /whisper to privately message any user.`, streamInfo.streamer, blue);
+        }
+        else if (usersTipTotal < cb.settings['whispercost'])
+        {
+            cb.chatNotice(`Tip ${cb.settings['whispercost'] - usersTipTotal} to enable /whisper for your account`, user, purple);
+        }
+     }
+ 
 
     if (tipInfo.HighestTipEver.hasOwnProperty('amount')) {
         if (tipInfo.HighestTipEver['amount'] < tippedOrg) {
