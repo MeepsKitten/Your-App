@@ -1,6 +1,10 @@
 cb.settings_choices = [
     { name: 'title', type: 'str', minLength: 1, maxLength: 255, defaultValue: "Follow Meepsalot on CB", label: "--------Stream Title--------" },
     { name: 'tags', type: 'str', minLength: 1, maxLength: 140, label: "Room Hastags" },
+    
+    {name:'captcha', type:'choice',
+    choice1:'enable',
+    choice2:'disable', defaultValue: 'disable', label: "Require users to verify that they are human before chatting"},
 
     { name: 'whispercost', type: 'int', minValue: 0, defaultValue: 0, label: "CHAT SETTINGS --------\nWhisper Cost [0 to disable] (after tipping this amount a user can use /whisper)" },
     { name: 'prefixesenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable chat prefixes (0 for disable, 1 for enable)" },
@@ -110,6 +114,7 @@ const streamInfo =
 {
     startTime: 0,
     totalSpanks: 0,
+    verifiedUsers: [],
     streamer: cb.room_slug,
 }
 
@@ -305,6 +310,7 @@ if (cb.settings['machinee']) {
     FreeCommands.push(new FreeCommand("/TBM", TBMCallback, TBMHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/CN", CNCallback, CNHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/WHISPER", WhisperCallback, WhisperHelpCallback, true, true));
+    FreeCommands.push(new FreeCommand("/JOIN", JoinCallback, JoinHelpCallback, (cb.settings['captcha'] == 'enable'), true));
     FreeCommands.push(new FreeCommand("/SPIN", SpinCallback, SpinHelpCallback, cb.settings['rewardsenabled'], true));
     FreeCommands.push(new FreeCommand("/ADDCOM", AddcomCallback, AddcomHelpCallback, cb.settings['addcom'], false));
     FreeCommands.push(new FreeCommand("/CLEARPREFIX", ClearPrefixCallback, ClearPrefixHelpCallback, true, true));
@@ -317,6 +323,8 @@ if (cb.settings['machinee']) {
 
 
 }
+
+cb.sendNotice(cb.settings['captcha'])
 
 //mark stream start
 streamInfo.startTime = new Date();
@@ -823,6 +831,23 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 
 //FREE COMMAND CALLBACKS
 //#region
+
+function JoinCallback(user, message, rawMsgData) {
+    
+    rawMsgData['m'] = 'Joining...';
+    if (!streamInfo.verifiedUsers.includes(user)) {
+        streamInfo.verifiedUsers.push(user);
+        cb.chatNotice("You may now chat freely.", user, blue);
+    }
+    else
+    {
+        cb.chatNotice("You have already joined chat", user, red);
+    }
+}
+
+function JoinHelpCallback(user, message, rawMsgData) {
+    return "Allows a user to chat";
+}
 
 function UptimeCallback(user, message, rawMsgData) {
     var curTime = new Date();
@@ -2166,6 +2191,13 @@ cb.onMessage(function (message) {
 
     if (UserInfo.mutedUsers[user]) {
         message['X-Spam'] = true;
+    }
+
+    if((!streamInfo.verifiedUsers.includes(user)) && !commandUsed)
+    {
+        message['m'] = String(`Message Failed: `).concat(message['m']);
+        message['X-Spam'] = true;
+        cb.sendNotice(`${user}, you must type "/join" to chat in this room`, user,red);
     }
 
     if (message['X-Spam']) {
