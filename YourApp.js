@@ -1,17 +1,19 @@
 cb.settings_choices = [
     { name: 'title', type: 'str', minLength: 1, maxLength: 255, defaultValue: "Follow Meepsalot on CB", label: "--------Stream Title--------" },
     { name: 'tags', type: 'str', minLength: 1, maxLength: 140, label: "Room Hastags" },
-    
-    {name:'captcha', type:'choice',
-    choice1:'enable',
-    choice2:'disable', defaultValue: 'disable', label: "Require users to verify that they are human before chatting"},
+
+    {
+        name: 'captcha', type: 'choice',
+        choice1: 'enable',
+        choice2: 'disable', defaultValue: 'disable', label: "Require users to verify that they are human before chatting"
+    },
 
     { name: 'whispercost', type: 'int', minValue: 0, defaultValue: 0, label: "CHAT SETTINGS --------\nWhisper Cost [0 to disable] (after tipping this amount a user can use /whisper)" },
     { name: 'prefixesenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable chat prefixes (0 for disable, 1 for enable)" },
     { name: 'addcom', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "/Addcom functionality (0 for disable, 1 for enable)" },
 
     { name: 'multiplier', type: 'int', minValue: 0, defaultValue: 1, label: "MODIFIERS -------- \nTip Multiplier (all incoming tips will be multiplied by this amount)" },
-    { name: 'timerupdate', type: 'int', minValue: 0, defaultValue: 10, label: "How many seconds between timer updates?" },
+    { name: 'timerupdate', type: 'int', minValue: 0, defaultValue: 1, label: "How many seconds between timer updates?" },
 
     { name: 'rewardsenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "REWARD POINTS OPTIONS --------\n Enable reward points (0 for disable, 1 for enable)" },
     { name: 'freeentryenabled', type: 'int', minValue: 0, maxValue: 1, defaultValue: 1, label: "Enable free ticket show entry (0 for disable, 1 for enable)" },
@@ -58,26 +60,29 @@ cb.settings_choices = [
     { name: 'toy', type: 'int', minValue: 0, defaultValue: 100, label: "Toy command cost" },
     { name: 'toyname', type: 'str', minLength: 1, maxLength: 255, defaultValue: 'my pee-pee', label: "Toy name (for toy command)" },
 
-    { name: 'machinee', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "FUCK MACHINE OPTIONS --------\n Fuck Machine functionality (0 for disable, 1 for enable)" },
-    { name: 'machineNotice', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Automatically send notices with levels (0 for disable, 1 for enable)" },
-    { name: 'machine1', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 1" },
-    { name: 'machine1cost', type: 'int', minValue: 1, defaultValue: 1, label: "    Cost" },
-    { name: 'machine1time', type: 'int', minValue: 1, defaultValue: 2, label: "    Time (in seconds)" },
-    { name: 'machine2', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Low', label: "Level 2" },
-    { name: 'machine2cost', type: 'int', minValue: 1, defaultValue: 25, label: "    Cost" },
-    { name: 'machine2time', type: 'int', minValue: 1, defaultValue: 15, label: "    Time (in seconds)" },
-    { name: 'machine3', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 3" },
-    { name: 'machine3cost', type: 'int', minValue: 1, defaultValue: 75, label: "    Cost" },
-    { name: 'machine3time', type: 'int', minValue: 1, defaultValue: 30, label: "    Time (in seconds)" },
-    { name: 'machine4', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'Medium', label: "Level 4" },
-    { name: 'machine4cost', type: 'int', minValue: 1, defaultValue: 100, label: "    Cost" },
-    { name: 'machine4time', type: 'int', minValue: 1, defaultValue: 45, label: "    Time (in seconds)" },
-    { name: 'machine5', type: 'str', minLength: 0, maxLength: 255, defaultValue: 'High', label: "Level 5" },
-    { name: 'machine5cost', type: 'int', minValue: 1, defaultValue: 150, label: "    Cost" },
-    { name: 'machine5time', type: 'int', minValue: 1, defaultValue: 35, label: "    Time (in seconds)" },
+    { name: 'levelse', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "CUSTOM LEVEL OPTIONS --------\n tip level functionality (0 for disable, 1 for enable)" },
+    { name: 'levelsNotice', type: 'int', minValue: 0, maxValue: 1, defaultValue: 0, label: "Automatically send notices with levels (0 for disable, 1 for enable)" },
+    { name: 'levelsRounding', type: 'choice', choice1: 'enabled', choice2: 'disabled', label: "Round tips to nearest afforable level" },
+    { name: 'levelsTimerE', type: 'choice', choice1: 'enabled', choice2: 'disabled', label: "Automatically start a timer when level is purchased (if applicable)" },
+    { name: 'levelsNumericalText', type: 'choice', choice1: 'enabled', choice2: 'disabled', label: "Show item numbers (in the order they are listed below)" },
+    { name: 'levels1',required: false, type: 'str', minLength: 0, maxLength: 255, defaultValue: '', label: "Item 1" },
+    { name: 'levels1cost', type: 'int', minValue: 1, defaultValue: 1, label: "    Cost" },
+    { name: 'levels1time', type: 'int', minValue: 0, defaultValue: 2, label: "    Time (in seconds) | 0 to activate instantly" },
+    { name: 'levels2',required: false, type: 'str', minLength: 0, maxLength: 255, defaultValue: '', label: "Item 2" },
+    { name: 'levels2cost', type: 'int', minValue: 1, defaultValue: 25, label: "    Cost" },
+    { name: 'levels2time', type: 'int', minValue: 0, defaultValue: 15, label: "    Time (in seconds) | 0 to activate instantly" },
+    { name: 'levels3',required: false, type: 'str', minLength: 0, maxLength: 255, defaultValue: '', label: "Item 3" },
+    { name: 'levels3cost', type: 'int', minValue: 1, defaultValue: 75, label: "    Cost" },
+    { name: 'levels3time', type: 'int', minValue: 0, defaultValue: 30, label: "    Time (in seconds) | 0 to activate instantly" },
+    { name: 'levels4',required: false, type: 'str', minLength: 0, maxLength: 255, defaultValue: '', label: "Item 4" },
+    { name: 'levels4cost', type: 'int', minValue: 1, defaultValue: 100, label: "    Cost" },
+    { name: 'levels4time', type: 'int', minValue: 0, defaultValue: 45, label: "    Time (in seconds) | 0 to activate instantly" },
+    { name: 'levels5',required: false, type: 'str', minLength: 0, maxLength: 255, defaultValue: '', label: "Item 5" },
+    { name: 'levels5cost', type: 'int', minValue: 1, defaultValue: 150, label: "    Cost" },
+    { name: 'levels5time', type: 'int', minValue: 0, defaultValue: 35, label: "    Time (in seconds) | 0 to activate instantly" },
 
 
-    
+
 ];
 
 var backgrounds = {
@@ -154,12 +159,12 @@ const UserInfo = {
     customPrefixes: {},
 }
 
-const FuckMacineInfo = {
+const levelsInfo = {
     levels: [],
     queue: [],
     noticeTimeout: undefined,
     queueTimeout: undefined,
-    enabled: cb.settings['machinee'],
+    enabled: cb.settings['levelse'],
 }
 
 //text info
@@ -226,19 +231,19 @@ var Commands = [];
 var FreeCommands = [];
 var TmpCommands = [];
 
-//machine init
-if (cb.settings['machinee']) {
+//levels init
+if (cb.settings['levelse']) {
 
-    if (cb.settings['machine1'].length > 0)
-        FuckMacineInfo.levels[cb.settings['machine1cost']] = { level: 1, name: cb.settings['machine1'], time: cb.settings['machine1time'] };
-    if (cb.settings['machine2'].length > 0)
-        FuckMacineInfo.levels[cb.settings['machine2cost']] = { level: 2, name: cb.settings['machine2'], time: cb.settings['machine2time'] };
-    if (cb.settings['machine3'].length > 0)
-        FuckMacineInfo.levels[cb.settings['machine3cost']] = { level: 3, name: cb.settings['machine3'], time: cb.settings['machine3time'] };
-    if (cb.settings['machine4'].length > 0)
-        FuckMacineInfo.levels[cb.settings['machine4cost']] = { level: 4, name: cb.settings['machine4'], time: cb.settings['machine4time'] };
-    if (cb.settings['machine5'].length > 0)
-        FuckMacineInfo.levels[cb.settings['machine5cost']] = { level: 5, name: cb.settings['machine5'], time: cb.settings['machine5time'] };
+    if (cb.settings['levels1'].length > 0)
+        levelsInfo.levels[cb.settings['levels1cost']] = { level: 1, name: cb.settings['levels1'], time: cb.settings['levels1time'] };
+    if (cb.settings['levels2'].length > 0)
+        levelsInfo.levels[cb.settings['levels2cost']] = { level: 2, name: cb.settings['levels2'], time: cb.settings['levels2time'] };
+    if (cb.settings['levels3'].length > 0)
+        levelsInfo.levels[cb.settings['levels3cost']] = { level: 3, name: cb.settings['levels3'], time: cb.settings['levels3time'] };
+    if (cb.settings['levels4'].length > 0)
+        levelsInfo.levels[cb.settings['levels4cost']] = { level: 4, name: cb.settings['levels4'], time: cb.settings['levels4time'] };
+    if (cb.settings['levels5'].length > 0)
+        levelsInfo.levels[cb.settings['levels5cost']] = { level: 5, name: cb.settings['levels5'], time: cb.settings['levels5time'] };
 
 }
 
@@ -281,9 +286,9 @@ if (cb.settings['machinee']) {
         backgrounds['purr'] = "cba81fd1-058e-46b7-b5ea-871ff6d46530";
     }
 
-    if (FuckMacineInfo.enabled == 1) {
-        FreeCommands.push(new FreeCommand("/LEVELS", LevelsCallback, LevelsHelpCallback, true, true));
-        FreeCommands.push(new FreeCommand("/LEVELSREMINDER", LevelsReminderCallback, LevelsReminderCallback, true, true));
+    if (levelsInfo.enabled == 1) {
+        FreeCommands.push(new FreeCommand("/STATICMENU", LevelsCallback, LevelsHelpCallback, true, true));
+        FreeCommands.push(new FreeCommand("/STATICMENUREMINDER", LevelsReminderCallback, LevelsReminderCallback, true, true));
     }
 
     /// invocation
@@ -301,7 +306,6 @@ if (cb.settings['machinee']) {
     FreeCommands.push(new FreeCommand("/STOPSHOW", StopShowCallback, StopShowHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/STOPSALES", StopSalesCallback, StopSalesHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/STARTSALES", StartSalesCallback, StartSalesHelpCallback, true, true));
-    FreeCommands.push(new FreeCommand("/MACHINE", MachineCallback, MachineHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/ADD", AddTicketCallback, AddTicketHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/SILENCE", SilenceCallback, SilenceHelpCallback, true, true));
     FreeCommands.push(new FreeCommand("/UNSILENCE", UnsilenceCallback, UnsilenceHelpCallback, true, true));
@@ -323,8 +327,6 @@ if (cb.settings['machinee']) {
 
 
 }
-
-cb.sendNotice(cb.settings['captcha'])
 
 //mark stream start
 streamInfo.startTime = new Date();
@@ -560,28 +562,69 @@ function updateGoalQueues(newgoal = false) {
     }
 }
 
-function FuckMachineCheck(tipped, user) {
-    if (FuckMacineInfo.enabled) {
-        var arrayLength = FuckMacineInfo.levels.length;
-        var bestOption = 0;
+function LevelsCheck(tipped, user) {
+    if (levelsInfo.enabled) {
 
-        for (var i = 0; i < arrayLength; i++) {
-            if (tipped >= i && (i != 0)) {
-                if (i > bestOption && FuckMacineInfo.levels[i]) {
-                    bestOption = i;
+        let level = null;
+
+        if (cb.settings['levelsRounding'] == 'enabled') {
+            var arrayLength = levelsInfo.levels.length;
+            var bestOption = 0;
+
+            for (var i = 0; i < arrayLength; i++) {
+                if (tipped >= i && (i != 0)) {
+                    if (i > bestOption && levelsInfo.levels[i]) {
+                        bestOption = i;
+                    }
                 }
             }
+
+            level = levelsInfo.levels[bestOption];
+        }
+        //dont find best possible, look for exact match
+        else {
+            level = levelsInfo.levels[tipped];
         }
 
-        let level = FuckMacineInfo.levels[bestOption];
         if (level) {
 
-            FuckMacineInfo.queue.push({ text: `${user} activated the machine at level ${level['level']} ("${level['name']}") for ${level['time']} seconds`, time: level['time'] })
-            if (!FuckMacineInfo.queueTimeout) {
+            if (cb.settings['levelsNumericalText'] == 'enabled') {
+                if (level['time'] > 0) {
+                    levelsInfo.queue.push({ text: `${user} activated tip level ${level['level']} ("${level['name']}") for ${level['time']} seconds`, time: level['time'] });
+                }
+                else {
+                    levelsInfo.queue.push({ text: `${user} activated tip level ${level['level']} ("${level['name']}")`, time: 0 });
+                }
+            }
+            else {
+                if (level['time'] > 0) {
+                    levelsInfo.queue.push({ text: `${user} activated the tip option "${level['name']}" for ${level['time']} seconds`, time: level['time'] });
+                }
+                else {
+                    levelsInfo.queue.push({ text: `${user} activated the tip option "${level['name']}"`, time: 0 });
+                }
+            }
+
+            if (!levelsInfo.queueTimeout) {
                 ExecuteQueuedTips();
             }
             else {
-                cb.sendNotice(`Tip at level ${level['level']} ("${level['name']}") for ${level['time']} seconds added to queue. (Spot ${FuckMacineInfo.queue.length})`, '', darkpurple, blue, 'bold')
+                if (cb.settings['levelsNumericalText'] == 'enabled') {
+                    if (level['time'] > 0) {
+                        cb.sendNotice(`Tip at level ${level['level']} ("${level['name']}") for ${level['time']} seconds added to queue. (Spot ${levelsInfo.queue.length})`, '', darkpurple, blue, 'bold')
+                    }
+                    else {
+                        cb.sendNotice(`Tip at level ${level['level']} ("${level['name']}") added to queue. (Spot ${levelsInfo.queue.length})`, '', darkpurple, blue, 'bold')
+                    }
+                }
+                else {
+                    if (level['time'] > 0) {
+                        cb.sendNotice(`Tip towards "${level['name']}") for ${level['time']} seconds added to queue. (Spot ${levelsInfo.queue.length})`, '', darkpurple, blue, 'bold')
+                    }
+                    else {
+                        cb.sendNotice(`Tip for "${level['name']}" added to queue. (Spot ${levelsInfo.queue.length})`, '', darkpurple, blue, 'bold')
+                    }
+                }
             }
         }
 
@@ -589,19 +632,24 @@ function FuckMachineCheck(tipped, user) {
 }
 
 function ExecuteQueuedTips() {
-    let object = FuckMacineInfo.queue[0];
-    let length = FuckMacineInfo.queue.length;
-    FuckMacineInfo.queue.shift();
+    let object = levelsInfo.queue[0];
+    let length = levelsInfo.queue.length;
+    levelsInfo.queue.shift();
 
     if (object) {
 
         cb.sendNotice(object['text'], '', gold, darkred, 'bold');
-        SetTimer(object['time']);
-        FuckMacineInfo.queueTimeout = cb.setTimeout(ExecuteQueuedTips, 1000 * object['time'])
+        
+        if(cb.settings['levelsTimerE'] == 'enabled'){
+            if(object['time'] > 0)
+                SetTimer(object['time']);
+        }
+
+        levelsInfo.queueTimeout = cb.setTimeout(ExecuteQueuedTips, 1000 * object['time'])
     }
     else {
-        cb.cancelTimeout(FuckMacineInfo.queueTimeout);
-        FuckMacineInfo.queueTimeout = undefined;
+        cb.cancelTimeout(levelsInfo.queueTimeout);
+        levelsInfo.queueTimeout = undefined;
     }
 }
 
@@ -833,14 +881,13 @@ function ToyCallback(cmd, sucess, tipped, user, to, message) {
 //#region
 
 function JoinCallback(user, message, rawMsgData) {
-    
+
     rawMsgData['m'] = 'Joining...';
     if (!streamInfo.verifiedUsers.includes(user)) {
         streamInfo.verifiedUsers.push(user);
         cb.chatNotice("You may now chat freely.", user, blue);
     }
-    else
-    {
+    else {
         cb.chatNotice("You have already joined chat", user, red);
     }
 }
@@ -851,7 +898,7 @@ function JoinHelpCallback(user, message, rawMsgData) {
 
 function UptimeCallback(user, message, rawMsgData) {
     var curTime = new Date();
-    var DeltaTime = ( curTime.getTime() - streamInfo.startTime) / 1000;
+    var DeltaTime = (curTime.getTime() - streamInfo.startTime) / 1000;
 
     let hours = Math.floor(DeltaTime / 3600);
     DeltaTime %= 3600;
@@ -869,56 +916,113 @@ function UptimeHelpCallback(user, message, rawMsgData) {
     return "Tells you how long the stream has been going (based on when the app is started, not the stream itself)";
 }
 
-function MachineCallback(user, message, rawMsgData) {
-
-    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
-        if (FuckMacineInfo.enabled) {
-            FuckMacineInfo.enabled = false;
-        }
-        else {
-            FuckMacineInfo.enabled = true;
-        }
-    }
-}
-
-function MachineHelpCallback(user, message, rawMsgData) {
-    return "(MODS ONLY) Toggles the Fuck Machine levels";
-}
-
 function LevelsCallback(user, message, rawMsgData) {
-    let arrayLength = FuckMacineInfo.levels.length;
-    let text = "Fuck machine levels:";
+    let arrayLength = levelsInfo.levels.length;
+    let text = null;
+
+    if (cb.settings['adaptiveMenu'] == 1) {
+        text = "Static Tip Menu Rewards:";
+    }
+    else {
+        text = "Tip Menu:";
+    }
+
     for (var i = 0; i < arrayLength; i++) {
-        if (FuckMacineInfo.levels[i]) {
+        if (levelsInfo.levels[i]) {
             text += '\n'
-            let level = FuckMacineInfo.levels[i];
-            text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+            let level = levelsInfo.levels[i];
+
+            if (cb.settings['levelsRounding'] == 'enabled') {
+                if (cb.settings['levelsNumericalText'] == 'enabled') {
+                    if (level['time'] > 0)
+                        text += `[${i}+ Tokens] Level ${level['level']}: "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i}+ Tokens] Level ${level['level']}: "${level['name']}"`;
+                }
+                else {
+                    if (level['time'] > 0)
+                        text += `[${i}+ Tokens] "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i}+ Tokens] "${level['name']}"`;
+                }
+            }
+            else {
+                if (cb.settings['levelsNumericalText'] == 'enabled') {
+                    if (level['time'] > 0)
+                        text += `[${i} Tokens] Level ${level['level']}: "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i} Tokens] Level ${level['level']}: "${level['name']}"`;
+                }
+                else {
+                    if (level['time'] > 0)
+                        text += `[${i} Tokens] "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i} Tokens] "${level['name']}"`;
+                }
+            }
+
+
         }
     }
     cb.sendNotice(text, user, white, darkpurple, 'bold');
 }
 
 function LevelsHelpCallback(user, message, rawMsgData) {
-    return "Shows you a list of fuck machine levels";
+    return "Shows you a list of tip levels";
 }
 
 function LevelsReminderCallback(user, message, rawMsgData) {
-    if ((rawMsgData['is_mod'] || (rawMsgData['user'] == cb.room_slug))) {
-        let arrayLength = FuckMacineInfo.levels.length;
-        let text = "Fuck machine levels:";
-        for (var i = 0; i < arrayLength; i++) {
-            if (FuckMacineInfo.levels[i]) {
-                text += '\n'
-                let level = FuckMacineInfo.levels[i];
-                text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+    let arrayLength = levelsInfo.levels.length;
+    let text = "Tip levels:";
+    for (var i = 0; i < arrayLength; i++) {
+        if (levelsInfo.levels[i]) {
+            text += '\n'
+            let level = levelsInfo.levels[i];
+
+            if(cb.settings['levelsRounding'] == 'enabled')
+            {
+                if(cb.settings['levelsNumericalText'] == 'enabled')
+                {
+                    if(level['time'] > 0)
+                        text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i}+ Tokens] Level ${level['level']}:"${level['name']}"`;
+                }
+                else
+                {
+                    if(level['time'] > 0)
+                        text += `[${i}+ Tokens] "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i}+ Tokens] "${level['name']}"`;
+                }
             }
+            else
+            {
+                if(cb.settings['levelsNumericalText'] == 'enabled')
+                {
+                    if(level['time'] > 0)
+                        text += `[${i} Tokens] Level ${level['level']}:"${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i} Tokens] Level ${level['level']}:"${level['name']}"`;
+                }
+                else
+                {
+                    if(level['time'] > 0)
+                        text += `[${i} Tokens] "${level['name']}" for ${level['time']} seconds`;
+                    else
+                        text += `[${i} Tokens] "${level['name']}"`;
+                }
+            }
+
+
         }
-        cb.sendNotice(text, '', white, darkpurple, 'bold');
     }
+        cb.sendNotice(text, '', white, darkpurple, 'bold');
+    
 }
 
 function LevelsReminderHelpCallback(user, message, rawMsgData) {
-    return "(MODS ONLY) Shows a list of fuck machine levels to all users";
+    return "(MODS ONLY) Shows a list of tip levels to all users";
 }
 
 function SilenceCallback(user, message, rawMsgData) {
@@ -1127,7 +1231,7 @@ function PrefixCallback(user, message, rawMsgData) {
                 if (activeUser(username)) {
                     cb.sendNotice(`Prefix set to ${prefix}`, user, gold, blue, 'bold');
 
-                    if(user != username)
+                    if (user != username)
                         cb.sendNotice(`${user} set your prefix to: ${prefix}`, username, gold, blue, 'bold');
 
                     UserInfo.customPrefixes[username] = prefix;
@@ -1137,8 +1241,7 @@ function PrefixCallback(user, message, rawMsgData) {
                 }
             }
         }
-        else
-        {
+        else {
             cb.sendNotice(`Command syntax invalid. Try /prefix [username] [prefix]`, user, red);
         }
 
@@ -1185,16 +1288,15 @@ function WhisperCallback(user, message, rawMsgData) {
                 cb.sendNotice(`User ${username} does not exsist!`, user, red);
             }
         }
-        else{
+        else {
             cb.sendNotice(`Command format not reconized. Try /whisper [user] [message]`, user, red);
         }
 
     }
     else {
         rawMsgData['X-Spam'] = true;
-        if(cb.settings['whispercost'] > 0)
-        {
-            let amount = tipInfo.AllTips[user] ? cb.settings['whispercost'] - tipInfo.AllTips[user] : cb.settings['whispercost']; 
+        if (cb.settings['whispercost'] > 0) {
+            let amount = tipInfo.AllTips[user] ? cb.settings['whispercost'] - tipInfo.AllTips[user] : cb.settings['whispercost'];
             cb.chatNotice(`You must tip ${amount} more to enable this command`, user, purple);
         }
         else
@@ -1203,16 +1305,15 @@ function WhisperCallback(user, message, rawMsgData) {
 }
 
 function WhisperHelpCallback(user, message, rawMsgData) {
-    if(cb.settings['whispercost'] > 0)
-    {
+    if (cb.settings['whispercost'] > 0) {
         let amount = tipInfo.AllTips[user] ? cb.settings['whispercost'] - tipInfo.AllTips[user] : cb.settings['whispercost'];
-        if(amount <= 0)         
-            return `[UNLOCKED] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;    
+        if (amount <= 0)
+            return `[UNLOCKED] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;
         else
-            return `[TIP ${amount} TO UNLOCK] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;    
+            return `[TIP ${amount} TO UNLOCK] Allows you to send a PM to a user | Usage: /whisper [username] [message]`;
 
     }
-        
+
     return String("Allows mods and fan club members to send a PM to a user | Usage: /whisper [username] [message]");
 }
 
@@ -1621,9 +1722,17 @@ function HelpHelpCallback() {
 }
 
 function TipMenuCallback(user, message, rawMsgData) {
+    
+    if(cb.settings['levelse'] == 1)
+    {
+        LevelsCallback(user,message,rawMsgData);
+    }
+   
+    if(cb.settings['adaptiveMenu'] == 1)
+    {
     message['X-Spam'] = true;
 
-    var help = "Tip Modifiers: \n Type any of the following as your optional message to activate. \n Alternatively tip the base amount for automatic activation"
+    var help = "Adaptive Tip Menu: \n Type any of the following as your optional message to activate. \n Alternatively tip the base amount for automatic activation"
 
     var length = Commands.length;
     for (i = 0; i < length; i++) {
@@ -1632,31 +1741,22 @@ function TipMenuCallback(user, message, rawMsgData) {
             help += cmd.help(cmd, user);
         }
     }
-
     cb.chatNotice(help, user, white, darkpurple, 'bold');
+    }
+
+   
+
     cb.chatNotice("This bot was coded by the model Meepsalot", user, blue);
 
 }
 
 function TipMenuHelpCallback() {
-    return String("Shows a list of tip menu options with instuctions on how to use them!");
+    return String("Shows a list of tip menu options with instuctions on how to use them.");
 }
 
 function ReminderCallback(user, message, rawMsgData) {
     if ((rawMsgData['is_mod'] || rawMsgData['user'] == cb.room_slug || rawMsgData['in_fanclub'])) {
-        var help = "Tip Modifiers: \n Type any of the following in your tip memo to activate"
-
-        var length = Commands.length;
-        for (i = 0; i < length; i++) {
-            var cmd = Commands[i];
-            if (cmd.enabled) {
-                help += cmd.help(cmd, '');
-            }
-        }
-
-        cb.chatNotice(help, '', white, darkpurple, 'bold');
-
-        cb.chatNotice("This bot was coded by the model Meepsalot", '', blue);
+        TipMenuCallback('',message,rawMsgData);
     }
 }
 
@@ -1960,9 +2060,9 @@ cb.onTip(function (tip) {
 
     UpdateGoals(tipped, 0);
 
-    FuckMachineCheck(tipped, user);
+    LevelsCheck(tipped, user);
 
-   
+
     var containsExplicitInvokation = false;
 
     var length = Commands.length;
@@ -2023,21 +2123,18 @@ cb.onTip(function (tip) {
     //if the key does not exsist initialize, otherwise add to its value
     tipInfo.AllTips[user] = (tipInfo.AllTips[user] || 0) + tippedOrg;
 
-     //Tell user of whisper status
-     if(cb.settings['whispercost'] > 0)
-     {
-        let usersTipTotal = tipInfo.AllTips[user]; 
-        if((usersTipTotal >= cb.settings['whispercost']) && ((usersTipTotal - tippedOrg) < cb.settings['whispercost']))
-        {
+    //Tell user of whisper status
+    if (cb.settings['whispercost'] > 0) {
+        let usersTipTotal = tipInfo.AllTips[user];
+        if ((usersTipTotal >= cb.settings['whispercost']) && ((usersTipTotal - tippedOrg) < cb.settings['whispercost'])) {
             cb.chatNotice(`You can now use /whisper to privately message any user.\nType "/help /whisper" for more information on how to use it.`, user, blue);
             cb.chatNotice(`${user} can now use /whisper to privately message any user.`, streamInfo.streamer, blue);
         }
-        else if (usersTipTotal < cb.settings['whispercost'])
-        {
+        else if (usersTipTotal < cb.settings['whispercost']) {
             cb.chatNotice(`Tip ${cb.settings['whispercost'] - usersTipTotal} to enable /whisper for your account`, user, purple);
         }
-     }
- 
+    }
+
 
     if (tipInfo.HighestTipEver.hasOwnProperty('amount')) {
         if (tipInfo.HighestTipEver['amount'] < tippedOrg) {
@@ -2193,12 +2290,13 @@ cb.onMessage(function (message) {
         message['X-Spam'] = true;
     }
 
-    if((!streamInfo.verifiedUsers.includes(user)) && !commandUsed)
-    {
-        message['m'] = String(`Message Failed: `).concat(message['m']);
-        message['X-Spam'] = true;
-        cb.sendNotice(`${user}, you must type "/join" to chat in this room`, user,red);
-    }
+    if (cb.settings['captcha'] == 'enabled') {
+        if ((!streamInfo.verifiedUsers.includes(user)) && !commandUsed) {
+            message['m'] = String(`Message Failed: `).concat(message['m']);
+            message['X-Spam'] = true;
+            cb.sendNotice(`${user}, you must type "/join" to chat in this room`, user, red);
+        }
+    }   
 
     if (message['X-Spam']) {
         message['background'] = grey;
