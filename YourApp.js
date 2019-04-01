@@ -86,8 +86,8 @@ cb.settings_choices = [
 ];
 
 var backgrounds = {
-    default: "f693e535-c6b4-4b43-898a-d81a8ccabde2",
-    edge: "52145946-8f2f-4132-a247-1644b260934a",
+    default: {Id:"f693e535-c6b4-4b43-898a-d81a8ccabde2", PrimaryColor: "#ffd800", SecondaryColor: "#ffffff"},
+    edge: {Id:"52145946-8f2f-4132-a247-1644b260934a", PrimaryColor: "#a8a8a8" , SecondaryColor: "#ffffff"}
 
 };
 
@@ -177,6 +177,7 @@ var gold = '#e6e655';
 var grey = '#dbdbdb';
 var black = '#000000';
 var white = '#ffffff';
+var meepsBlue = '#47A5C9';
 var fontSize = 11;
 var smallfontSize = 9;
 
@@ -273,17 +274,17 @@ if (cb.settings['levelse']) {
     if (cb.settings['extras'] == 1) {
         FreeCommands.push(new FreeCommand("/KASS", KassCallback, KassHelpCallback, true, true));
 
-        backgrounds['meeps'] = "85c01932-c376-4449-a47d-33cad12521d3";
-        backgrounds['coolcat'] = "a52b8728-516f-4fb1-b11f-b9ee41cd83d6";
-        backgrounds['kass'] = "73a76b1e-69e6-4721-8b60-e608cc64661a";
-        backgrounds['booty'] = "f1176b95-6dfb-4793-a178-8d050a9d0878";
-        backgrounds['nocturne'] = "9c70d37d-6e59-4277-835d-ef11e0e3a1c3";
-        backgrounds['meepsicon'] = "8bef6bac-4915-4f40-899e-03e7b4bc949b";
-        backgrounds['inception'] = "847973dc-4d5c-42bf-a4b8-1047368594bb";
-        backgrounds['kitten'] = "5551b3b1-082e-422f-a2ab-871182eae153";
-        backgrounds['nosebleed'] = "f5527216-4db6-4379-96b0-f3564649049b";
-        backgrounds['hypno'] = "8a22975c-cf26-4d65-967f-77a04a5ddbcc";
-        backgrounds['purr'] = "cba81fd1-058e-46b7-b5ea-871ff6d46530";
+        backgrounds['meeps'] = {Id:"85c01932-c376-4449-a47d-33cad12521d3", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['coolcat'] = {Id:"a52b8728-516f-4fb1-b11f-b9ee41cd83d6", PrimaryColor: "#ff1a19", SecondaryColor: white};
+        backgrounds['kass'] = {Id:"73a76b1e-69e6-4721-8b60-e608cc64661a", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['booty'] = {Id:"f1176b95-6dfb-4793-a178-8d050a9d0878", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['nocturne'] = {Id:"9c70d37d-6e59-4277-835d-ef11e0e3a1c3", PrimaryColor: "#3EB618", SecondaryColor: white};
+        backgrounds['meepsicon'] = {Id:"8bef6bac-4915-4f40-899e-03e7b4bc949b", PrimaryColor: darkpurple, SecondaryColor: white};
+        backgrounds['inception'] = {Id:"847973dc-4d5c-42bf-a4b8-1047368594bb", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['kitten'] = {Id:"5551b3b1-082e-422f-a2ab-871182eae153", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['nosebleed'] = {Id:"f5527216-4db6-4379-96b0-f3564649049b", PrimaryColor: "#ff1a19", SecondaryColor: white};
+        backgrounds['hypno'] = {Id:"8a22975c-cf26-4d65-967f-77a04a5ddbcc", PrimaryColor: meepsBlue, SecondaryColor: white};
+        backgrounds['purr'] = {Id:"cba81fd1-058e-46b7-b5ea-871ff6d46530", PrimaryColor: "#ff1a19", SecondaryColor: white};
     }
 
     if (levelsInfo.enabled == 1) {
@@ -2316,14 +2317,14 @@ cb.onDrawPanel(function (user) {
     return {
         "template": "image_template",
         "layers": [
-            { 'type': 'image', 'fileID': currentBackground },
+            { 'type': 'image', 'fileID': currentBackground['Id'] },
             {
                 'type': 'text',
                 'text': goalInfo.firstPanelHeader,
                 'top': 5,
                 'left': 77,
                 'font-size': fontSize,
-                'color': 'purple',
+                'color': currentBackground['PrimaryColor'],
             },
             {
                 'type': 'text',
@@ -2331,7 +2332,7 @@ cb.onDrawPanel(function (user) {
                 'top': 29,
                 'left': 77,
                 'font-size': fontSize,
-                'color': 'purple',
+                'color': currentBackground['PrimaryColor'],
             },
             {
                 'type': 'text',
@@ -2339,7 +2340,7 @@ cb.onDrawPanel(function (user) {
                 'top': 8,
                 'left': goalInfo.firstPanelHeaderOffset,
                 'font-size': smallfontSize,
-                'color': 'white',
+                'color': currentBackground['SecondaryColor'],
             },
             {
                 'type': 'text',
@@ -2347,7 +2348,7 @@ cb.onDrawPanel(function (user) {
                 'top': 31,
                 'left': goalInfo.secondPanelHeaderOffset,
                 'font-size': smallfontSize,
-                'color': 'white',
+                'color': currentBackground['SecondaryColor'],
             },
             {
                 'type': 'text',
@@ -2355,7 +2356,7 @@ cb.onDrawPanel(function (user) {
                 'top': 52,
                 'left': 77,
                 'font-size': smallfontSize,
-                'color': 'white',
+                'color': currentBackground['SecondaryColor'],
             },
         ],
     };
